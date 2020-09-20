@@ -76,12 +76,12 @@ WSGI_APPLICATION = 'landlord_app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-    'land-db' {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
         'user': 'Andrew',
-        'password': 'pso8mrA0P2gunwdHsde5'
+        'password': 'RwSCcX6xMQHudHU1XM9z'
+        'HOST': 'landlord-db.cv13zxmqpszo.us-west-2.rds.amazonaws.com'
+        'PORT': '5432'
     }
 }
 
