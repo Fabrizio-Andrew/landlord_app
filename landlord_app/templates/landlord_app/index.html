@@ -8,16 +8,17 @@
 
 {% block body %}
 
-<h1>Hello {{ name }}!</h1>
+<h1>Hello you sexy fuck!</h1>
 
 <ol>
   {% for unit in units %}
     <li>Your property: {{ unit }}</li>
 <!--TO-DO: Gonna need some killer logic somewhere for this piece:-->
       <ul>
-        <li>Tenant: {{ tenant }}</li>
-        <li>Rent: {{ rent }}</li>
-        <li>Status: {{ status }}
+        <li>Nickname: {{ nickname }}</li>
+        <li>Address: {{ address }}</li>
+        <li>Bedrooms: {{ bedrooms }}</li>
+        <li>Bathrooms: {{ bathrooms }}</li>
       </ul>
   {% endfor %}
 </ol>

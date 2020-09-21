@@ -15,7 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from landlord_app import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path("", views.index, name="index"),
+    path('/addproperty', views.add_property, name='addproperty'),
+    path('/saveproperty', views.save_property, name='saveproperty')
 ]
