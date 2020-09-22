@@ -1,4 +1,4 @@
-from landlord_app.models import Unit
+from landlord_app.models import Units
 
 def all_properties():
     return models.Unit.objects.all()

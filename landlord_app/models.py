@@ -10,7 +10,7 @@ class Users(models.Model):
     address_line2 = models.CharField(max_length=120)
     city = models.CharField(max_length=40)
     state = models.CharField(max_length=20)
-    zipcode = models.PositiveIntegerField(max_value=99999)
+    zipcode = models.PositiveIntegerField()
     units = models.ForeignKey(
         'Units',
         on_delete=models.CASCADE
@@ -32,9 +32,9 @@ class Units(models.Model):
     address_line2 = models.CharField(max_length=120)
     city = models.CharField(max_length=40)
     state = models.CharField(max_length=20)
-    zipcode = models.PositiveIntegerField(max_value=99999)
-    bedrooms = models.PositiveIntegerField(max_value=20)
-    bathrooms = models.PositiveIntegerField(max_value=20)
+    zipcode = models.PositiveIntegerField()
+    bedrooms = models.PositiveIntegerField()
+    bathrooms = models.PositiveIntegerField()
     tenants = models.ForeignKey(
         'Tenants',
         on_delete=models.CASCADE
@@ -76,30 +76,30 @@ class Ovrhd_Expense_Pmts(models.Model):
     rtn_number = models.PositiveIntegerField()
     acct_number = models.PositiveIntegerField()
     acct_type = models.CharField(max_length=1)
-    check_num = models.PositiveIntegerField(max_value=9999)
+    check_num = models.PositiveIntegerField()
 #    check_img = ImageField()
     cc_num = models.PositiveIntegerField()
-    cc_exp_month = models.PositiveIntegerField(max_value=12)
-    cc_exp_year = models.PositiveIntegerField(max_value=2040)
+    cc_exp_month = models.PositiveIntegerField()
+    cc_exp_year = models.PositiveIntegerField()
     cc_vercode = models.PositiveIntegerField()
 
 class Tenants(models.Model):
-    tenant_number = models.PositiveIntegerField(max_value=4)
+    tenant_number = models.PositiveIntegerField()
     tenant1_first = models.CharField(max_length=40)
     tenant1_last = models.CharField(max_length=40)
-    tenant1_ssn = models.PositiveIntegerField(max_value=999999999)
+    tenant1_ssn = models.PositiveIntegerField()
     tenant1_email = models.EmailField(max_length=254)
     tenant2_first = models.CharField(max_length=40)
     tenant2_last = models.CharField(max_length=40)
-    tenant2_ssn = models.PositiveIntegerField(max_value=999999999)
+    tenant2_ssn = models.PositiveIntegerField()
     tenant2_email = models.EmailField(max_length=254)
     tenant3_first = models.CharField(max_length=40)
     tenant3_last = models.CharField(max_length=40)
-    tenant3_ssn = models.PositiveIntegerField(max_value=999999999)
+    tenant3_ssn = models.PositiveIntegerField()
     tenant3_email = models.EmailField(max_length=254)
     tenant4_first = models.CharField(max_length=40)
     tenant4_last = models.CharField(max_length=40)
-    tenant4_ssn = models.PositiveIntegerField(max_value=999999999)
+    tenant4_ssn = models.PositiveIntegerField()
     tenant4_email = models.EmailField(max_length=254)
     pets = models.JSONField(encoder=None, decoder=None)
     leases = models.ForeignKey(
