@@ -1,10 +1,17 @@
 from landlord_app.models import Units
 
-def all_properties():
+def list_units():
     return models.Unit.objects.all()
 
-def saveproperty(submission):
+def save_unit(submission):
     print(submission)
-    x = Units(nickname=submission.get('nicknamevalue'), address=submission.get('addressvalue'), bedrooms=submission.get('bedvalue'), bathrooms=submission.get('bathvalue'))
+    x = Units(nickname=submission.get('nickname'),
+        address_line1=submission.get('address_line1'),
+        address_line2=submission.get('address_line2'),
+        city=submission.get('city'),
+        state=submission.get('state'),
+        zipcode=submission.get('zipcode'),
+        bedrooms=submission.get('bedrooms'),
+        bathrooms=submission.get('bathrooms'))
     x.save()
     print('Saved')

@@ -5,16 +5,24 @@ from landlord_app import util
 
 def index(request):
     return render(request, "landlord_app/index.html", {
-        "entries": util.all_properties
+        "entries": util.list_units
     })
 
-def add_property(request):
-    return render(request, "landlord_app/add_property.html")
+def add_unit(request):
+    return render(request, "landlord_app/add_unit.html")
 
-def save_property(request):
-    x = {'nicknamevalue': request.POST['nickname'], 'addressvalue': request.POST['street_address'], 'bedvalue': request.POST['bedrooms'], 'bathvalue': request.POST['bathrooms']}
-    util.saveproperty(x)
-    print(util.all_properties)
+def save_unit(request):
+    x = {'nickname': request.POST['nickname'],
+        'address_line1': request.POST['address_line1'],
+        'address_line2': request.POST['address_line2'],
+        'city': request.POST['city'],
+        'state': request.POST['state'],
+        'zipcode': request.POST['zipcode'],
+        'bedrooms': request.POST['bedrooms'],
+        'bathrooms': request.POST['bathrooms']
+    }
+    util.save_unit(x)
+    print(util.list_units)
     return render(request, 'landlord_app/index.html', {
 
     })
