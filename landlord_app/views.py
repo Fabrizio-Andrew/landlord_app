@@ -4,12 +4,21 @@ from landlord_app import util
 # Here's some views:
 
 def index(request):
-    return render(request, "landlord_app/index.html", {
-        "entries": util.list_units
+#    for d in util.list_units_detailed:
+#        nicknames = d.{'nickname'}
+#        address_line1 = d.{'address_line1'}
+#        address_line2 = d.{'address_line2'}
+#        city = d.{'city'}
+#        state = d.{'state'}
+#        zipcode = d.{'zipcode'}
+#        bedrooms = d.{'bedrooms'}
+#        bathrooms = d.{'bathrooms'}
+    return render(request, 'landlord_app/index.html', {
+        'units': util.list_units_detailed
     })
 
 def add_unit(request):
-    return render(request, "landlord_app/add_unit.html")
+    return render(request, 'landlord_app/add_unit.html')
 
 def save_unit(request):
     x = {'nickname': request.POST['nickname'],
@@ -22,7 +31,11 @@ def save_unit(request):
         'bathrooms': request.POST['bathrooms']
     }
     util.save_unit(x)
-    print(util.list_units)
+    #for unit in util.list_units():
+
+
+
     return render(request, 'landlord_app/index.html', {
+        'units': util.list_units
 
     })

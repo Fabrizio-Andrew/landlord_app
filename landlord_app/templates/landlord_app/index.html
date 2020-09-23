@@ -12,13 +12,16 @@
 
 <ol>
   {% for unit in units %}
-    <li>Your property: {{ unit }}</li>
+    <li>{{ unit.nickname }}</li>
 <!--TO-DO: Gonna need some killer logic somewhere for this piece:-->
       <ul>
-        <li>Nickname: {{ nickname }}</li>
-        <li>Address: {{ address }}</li>
-        <li>Bedrooms: {{ bedrooms }}</li>
-        <li>Bathrooms: {{ bathrooms }}</li>
+        <li>Address Line 1: {{ unit.address_line1 }}</li>
+        <li>Address Line 2: {{ unit.address_line2 }}</li>
+        <li>City: {{ unit.city }}</li>
+        <li>State: {{ unit.state }}</li>
+        <li>ZIP: {{ unit.zipcode }}</li>
+        <li>Bedrooms: {{ unit.bedrooms }}</li>
+        <li>Bathrooms: {{ unit.bathrooms }}</li>
       </ul>
   {% endfor %}
 </ol>
