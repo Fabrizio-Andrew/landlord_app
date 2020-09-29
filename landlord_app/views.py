@@ -36,6 +36,6 @@ def save_unit(request):
 
 
     return render(request, 'landlord_app/index.html', {
-        'units': util.list_units
+        'units': util.list_units_detailed
 
     })

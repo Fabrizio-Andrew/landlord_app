@@ -1,6 +1,7 @@
 from landlord_app.models import Units
 
 # This is how I can access object attributes via queries and combine into python dicts nested in a list.  A "DickTucken"
+# Might be better to loop through results on the html template.
 def list_units_detailed():
     results = []
     for x in Units.objects.all():
@@ -18,6 +19,8 @@ def list_units_detailed():
     print(results)
     return results
 
+
+# This is like a complete duplicate of views.save_unit.  Who wrote this garbage?
 def save_unit(submission):
     print(submission)
     x = Units(nickname=submission.get('nickname'),
