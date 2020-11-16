@@ -1,4 +1,4 @@
-from landlord_app.models import Units
+from landlord_app.models import Unit
 
 # This is how I can access object attributes via queries and combine into python dicts nested in a list.  A "DickTucken"
 # Might be better to loop through results on the html template.
