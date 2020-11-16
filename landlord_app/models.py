@@ -15,7 +15,7 @@ class User(models.Model):
     state = models.CharField(max_length=20)
     zipcode = models.PositiveIntegerField()
     units = models.ForeignKey(
-        'Units',
+        'Unit',
         on_delete=models.SET_NULL,
         blank=True,
         null=True
@@ -32,7 +32,7 @@ class Unit(models.Model):
     bedrooms = models.PositiveIntegerField()
     bathrooms = models.PositiveIntegerField()
     tenants = models.ForeignKey(
-        'Tenants',
+        'Tenant',
         on_delete=models.SET_NULL,
         blank=True,
         null=True
@@ -47,20 +47,20 @@ class Tenant(models.Model):
     tenant_email = models.EmailField(max_length=254)
     tenant_start = models.DateField(auto_now=False, auto_now_add=False, default=date.today)
     tenant_end = models.DateField(auto_now=False, auto_now_add=False, default=date.today)
-    leases = models.ForeignKey(
-        'Leases',
+    lease = models.ForeignKey(
+        'Lease',
         on_delete=models.SET_NULL,
         blank=True,
         null=True
     )
     tenant_payments = models.ForeignKey(
-        'Tenant_Payments',
+        'Tenant_Payment',
         on_delete=models.SET_NULL,
         blank=True,
         null=True
     )
     evict_notices = models.ForeignKey(
-        'Evict_Notices',
+        'Evict_Notice',
         on_delete=models.SET_NULL,
         blank=True,
         null=True
