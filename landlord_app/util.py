@@ -4,7 +4,7 @@ from landlord_app.models import Unit
 # Might be better to loop through results on the html template.
 def list_units_detailed():
     results = []
-    for x in Units.objects.all():
+    for x in Unit.objects.all():
         d = {
             'nickname': x.nickname,
             'address_line1': x.address_line1,
@@ -23,7 +23,7 @@ def list_units_detailed():
 # This is like a complete duplicate of views.save_unit.  Who wrote this garbage?
 def save_unit(submission):
     print(submission)
-    x = Units(nickname=submission.get('nickname'),
+    x = Unit(nickname=submission.get('nickname'),
         address_line1=submission.get('address_line1'),
         address_line2=submission.get('address_line2'),
         city=submission.get('city'),
