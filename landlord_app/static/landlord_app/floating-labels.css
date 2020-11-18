@@ -20,6 +20,13 @@ body {
   margin: auto;
 }
 
+.form-onboard {
+    width: 100%;
+    max-width: 800px;
+    padding: 15px;
+    margin: auto;
+}
+
 .form-label-group {
   position: relative;
   margin-bottom: 1rem;
