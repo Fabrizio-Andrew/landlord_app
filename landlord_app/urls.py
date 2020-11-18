@@ -20,6 +20,7 @@ from landlord_app import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("", views.index, name="index"),
+    path("login", views.login_view, name="login"),
     path('addunit', views.add_unit, name='addunit'),
     path('saveunit', views.save_unit, name='saveunit')
 ]

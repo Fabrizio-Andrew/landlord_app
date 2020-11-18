@@ -10,10 +10,19 @@
     <meta name="generator" content="Jekyll v4.1.1">
     <title>{% block title %}{% endblock %}</title>
 
+    <!-- JS for layout page-->
+<!--    <script src="/static/landlord_app/layout.js"></script> -->
+
     <!-- Bootstrap core CSS -->
     <link href="https://getbootstrap.com/docs/4.5/dist/css/bootstrap.min.css" rel="stylesheet">
     {% block head %}
     {% endblock %}
+    <style>
+      #login-button {
+        margin-right: 10px;
+        color: rgb(1, 143, 1);
+      }
+    </style>
   </head>
   <body>
     <header>
@@ -47,19 +56,14 @@
             </li>
           </ul>
           <form class="form-inline my-2 my-lg-0">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-            <button class="btn btn-outline-success my-2 my-sm-0" style="color: white" type="submit">Search</button>
+            <button type="button" class="btn btn-light" id="login-button" onclick="document.location ='/login'">Login</button>
+            <button class="btn btn-outline-success my-2 my-sm-0" id="register-button" style="color: white" type="submit">Create Account</button>
           </form>
         </div>
       </nav>
     </header>
       {% block body %}
       {% endblock %}
-      <!-- FOOTER -->
-      <footer class="container">
-        <p class="float-right"><a href="#">Back to top</a></p>
-        <p>&copy; 2017-2020 Company, Inc. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
-      </footer>
   </body>
   {% block script %}
   {% endblock %}
