@@ -17,6 +17,7 @@ def index(request):
     """
     return render(request, 'landlord_app/index.html')
 
+
 def login_view(request):
     if request.method == "POST":
 
@@ -69,9 +70,9 @@ def register(request):
         return render(request, "network/register.html")
 
 
-
 def add_unit(request):
     return render(request, 'landlord_app/add_unit.html')
+
 
 def save_unit(request):
     x = {'nickname': request.POST['nickname'],
