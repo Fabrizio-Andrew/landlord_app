@@ -1,25 +1,24 @@
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 from datetime import date
 
-# TO-DO: Add-in image fields
-
-class User(models.Model):
-    username = models.EmailField(max_length=254)
-    password = models.CharField(max_length=40)
-    first_name = models.CharField(max_length=40)
-    last_name = models.CharField(max_length=40)
-    company = models.CharField(max_length=80, blank=True)
-    address_line1 = models.CharField(max_length=120)
-    address_line2 = models.CharField(max_length=120, blank=True)
-    city = models.CharField(max_length=40)
-    state = models.CharField(max_length=20)
-    zipcode = models.PositiveIntegerField()
-    units = models.ForeignKey(
-        'Unit',
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True
-    )
+# class User(AbstractUser):
+#    username = models.EmailField(max_length=254, unique=True)
+#    password = models.CharField(max_length=40)
+#    first_name = models.CharField(max_length=40)
+#    last_name = models.CharField(max_length=40)
+#    company = models.CharField(max_length=80, blank=True)
+#    address_line1 = models.CharField(max_length=120)
+#    address_line2 = models.CharField(max_length=120, blank=True)
+#    city = models.CharField(max_length=40)
+#    state = models.CharField(max_length=20)
+#    zipcode = models.PositiveIntegerField()
+#    units = models.ForeignKey(
+#        'Unit',
+#        on_delete=models.SET_NULL,
+#        blank=True,
+#        null=True
+#    )
 
 
 class Unit(models.Model):
@@ -29,8 +28,6 @@ class Unit(models.Model):
     city = models.CharField(max_length=40)
     state = models.CharField(max_length=20)
     zipcode = models.PositiveIntegerField()
-    bedrooms = models.PositiveIntegerField()
-    bathrooms = models.PositiveIntegerField()
     tenants = models.ForeignKey(
         'Tenant',
         on_delete=models.SET_NULL,
@@ -43,7 +40,6 @@ class Tenant(models.Model):
     tenant_number = models.PositiveIntegerField()
     tenant_first = models.CharField(max_length=40)
     tenant_last = models.CharField(max_length=40)
-    tenant_ssn = models.PositiveIntegerField()
     tenant_email = models.EmailField(max_length=254)
     tenant_start = models.DateField(auto_now=False, auto_now_add=False, default=date.today)
     tenant_end = models.DateField(auto_now=False, auto_now_add=False, default=date.today)

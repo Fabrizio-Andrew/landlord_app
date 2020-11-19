@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import psycopg2
+import os
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -83,7 +85,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL="landlord_app.User"
+# AUTH_USER_MODEL = "landlord_app.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

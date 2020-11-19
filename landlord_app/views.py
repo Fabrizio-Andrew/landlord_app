@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from landlord_app import util
 
-from .models import User
+# from .models import User
 
 # Here's some views:
 
@@ -45,9 +45,7 @@ def logout_view(request):
 
 def register(request):
     if request.method == "POST":
-        username = request.POST["username"]
-        email = request.POST["email"]
-
+        print(request.POST)
         # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
@@ -55,20 +53,30 @@ def register(request):
             return render(request, "landlord_app/register.html", {
                 "message": "Passwords must match."
             })
+        user = User(username=request.POST["email"],
+        password=password,
+        first_name=request.POST["firstname"],
+        last_name=request.POST["lastname"],
+        address_line1=request.POST["street1"],
+        address_line2=request.POST["street2"],
+        city=request.POST["city"],
+        state=request.POST["state"],
+        zipcode=request.POST["zipcode"])
 
         # Attempt to create new user
         try:
-            user = User.objects.create_user(username, email, password)
             user.save()
         except IntegrityError:
             return render(request, "landlord_app/register.html", {
                 "message": "Username already taken."
             })
         login(request, user)
-        return HttpResponseRedirect(reverse("index"))
+        return HttpResponseRedirect(reverse("landing"))
     else:
         return render(request, "landlord_app/register.html")
 
+def landing_page(request):
+    return render(request, 'landlord_app/landing_page.html')
 
 def add_unit(request):
     return render(request, 'landlord_app/add_unit.html')
