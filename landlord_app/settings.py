@@ -85,7 +85,7 @@ DATABASES = {
     }
 }
 
-# AUTH_USER_MODEL = "landlord_app.User"
+AUTH_USER_MODEL = "landlord_app.User"
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

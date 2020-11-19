@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from landlord_app import util
 
-# from .models import User
+from .models import User
 
 # Here's some views:
 
