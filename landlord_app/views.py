@@ -24,12 +24,13 @@ def login_view(request):
         # Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
+
         user = authenticate(request, username=username, password=password)
 
         # Check if authentication successful
         if user is not None:
             login(request, user)
-            return HttpResponseRedirect(reverse("index"))
+            return HttpResponseRedirect(reverse("landing"))
         else:
             return render(request, "landlord_app/login.html", {
                 "message": "Invalid username and/or password."
@@ -45,7 +46,7 @@ def logout_view(request):
 
 def register(request):
     if request.method == "POST":
-        print(request.POST)
+
         # Ensure password matches confirmation
         password = request.POST["password"]
         confirmation = request.POST["confirmation"]
@@ -55,7 +56,6 @@ def register(request):
             })
         user = User(username=request.POST["email"],
         email=request.POST["email"],
-        password=password,
         first_name=request.POST["firstname"],
         last_name=request.POST["lastname"],
         address_line1=request.POST["street1"],
@@ -63,6 +63,9 @@ def register(request):
         city=request.POST["city"],
         state=request.POST["state"],
         zipcode=request.POST["zipcode"])
+
+        # Hash and save password
+        user.set_password(password)
 
         # Attempt to create new user
         try:

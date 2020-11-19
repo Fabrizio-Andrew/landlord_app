@@ -52,10 +52,12 @@
               <a class="nav-link disabled" href="#">Disabled</a>
             </li>
           </ul>
-          <form class="form-inline my-2 my-lg-0">
-            <button type="button" class="btn btn-light" id="login-button" onclick="document.location ='/login'">Login</button>
+          {% if user.is_authenticated %}
+            <button type="button" class="btn btn-outline-success my-2 my-sm-0" id="logout-button" style="color: white" onclick="document.location ='/logout'">Logout</button>
+          {% else %}
+        <button type="button" class="btn btn-light" id="login-button" onclick="document.location ='/login'">Login</button>
             <button type="button" class="btn btn-outline-success my-2 my-sm-0" id="register-button" style="color: white" onclick="document.location ='/register'">Create Account</button>
-          </form>
+          {% endif %}
         </div>
       </nav>
     </header>
