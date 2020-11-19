@@ -54,6 +54,7 @@ def register(request):
                 "message": "Passwords must match."
             })
         user = User(username=request.POST["email"],
+        email=request.POST["email"],
         password=password,
         first_name=request.POST["firstname"],
         last_name=request.POST["lastname"],
