@@ -13,7 +13,7 @@ class User(AbstractUser):
 class Unit(models.Model):
     nickname = models.CharField(max_length=40)
     address_line1 = models.CharField(max_length=120)
-    address_line2 = models.CharField(max_length=120)
+    address_line2 = models.CharField(max_length=120, blank=True, null=True)
     city = models.CharField(max_length=40)
     state = models.CharField(max_length=20)
     zipcode = models.PositiveIntegerField()
@@ -23,6 +23,18 @@ class Unit(models.Model):
         blank=False,
         null=False
     )
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "nickname": self.nickname,
+            "address_line1": self.address_line1,
+            "address_line2": self.address_line2,
+            "city": self.city,
+            "state": self.state,
+            "zipcode": self.zipcode,
+            "owner": self.owner.id
+        }
 
 
 class Tenant(models.Model):

@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from landlord_app import util
 
-from .models import User
+from .models import User, Unit
 
 # Here's some views:
 
@@ -79,8 +79,19 @@ def register(request):
     else:
         return render(request, "landlord_app/register.html")
 
+@login_required
 def landing_page(request):
     return render(request, 'landlord_app/landing_page.html')
+
+@login_required
+def get_units(request):
+    """
+    Returns all instances of Unit belonging to the currently authenticated user.
+    """
+
+    user = request.user
+    units = Unit.objects.filter(owner=user)
+    return JsonResponse([unit.serialize() for unit in units], safe=False)
 
 def add_unit(request):
     return render(request, 'landlord_app/add_unit.html')

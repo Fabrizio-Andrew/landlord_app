@@ -24,6 +24,7 @@ urlpatterns = [
     path("logout", views.logout_view, name="logout"),
     path("register", views.register, name="register"),
     path("landing", views.landing_page, name="landing"),
+    path("getunits", views.get_units, name="getunits"),
     path('addunit', views.add_unit, name='addunit'),
     path('saveunit', views.save_unit, name='saveunit')
 ]
