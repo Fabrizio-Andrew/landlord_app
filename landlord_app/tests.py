@@ -17,6 +17,11 @@ class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
 
+    username = factory.Faker('ascii_safe_email')
+    address_line1 = factory.Faker('street_address')
+    city = factory.Faker('city')
+    state = factory.Faker('state')
+    zipcode = factory.Faker('postcode')
 
 
 class UnitFactory(DjangoModelFactory):
@@ -47,13 +52,14 @@ class RequestTestCase(TestCase):
         resp = views.landing_page(req)
         self.assertEqual(resp.status_code, 200)
 
+
 class Get_UnitsTestCase(TestCase):
     
     def setUp(self):
 
         # Create Users:
-        user1 = UserFactory(username='user1')
-        user2 = UserFactory(username='user2')
+        user1 = UserFactory(username='user1', zipcode='11111')
+        user2 = UserFactory(username='user2', zipcode='12345')
 
         # Create Units:
         unit1 = UnitFactory(zipcode='11111')

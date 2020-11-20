@@ -4,11 +4,22 @@ from datetime import date
 
 # All of these fields are optional to make Factory Boy happy
 class User(AbstractUser):
-    address_line1 = models.CharField(max_length=120, blank=True, null=True)
+    address_line1 = models.CharField(max_length=120)
     address_line2 = models.CharField(max_length=120, blank=True, null=True)
-    city = models.CharField(max_length=40, blank=True, null=True)
-    state = models.CharField(max_length=20, blank=True, null=True)
-    zipcode = models.PositiveIntegerField(blank=True, null=True)
+    city = models.CharField(max_length=40)
+    state = models.CharField(max_length=20)
+    zipcode = models.PositiveIntegerField()
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "username": self.username,
+            "address_line1": self.address_line1,
+            "address_line2": self.address_line2,
+            "city": self.city,
+            "state": self.state,
+            "zipcode": self.zipcode
+        }
 
 
 class Unit(models.Model):
