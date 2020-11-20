@@ -2,12 +2,13 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 from datetime import date
 
+# All of these fields are optional to make Factory Boy happy
 class User(AbstractUser):
-    address_line1 = models.CharField(max_length=120)
-    address_line2 = models.CharField(max_length=120, blank=True)
-    city = models.CharField(max_length=40)
-    state = models.CharField(max_length=20)
-    zipcode = models.PositiveIntegerField()
+    address_line1 = models.CharField(max_length=120, blank=True, null=True)
+    address_line2 = models.CharField(max_length=120, blank=True, null=True)
+    city = models.CharField(max_length=40, blank=True, null=True)
+    state = models.CharField(max_length=20, blank=True, null=True)
+    zipcode = models.PositiveIntegerField(blank=True, null=True)
 
 
 class Unit(models.Model):
