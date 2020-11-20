@@ -52,12 +52,28 @@ class Get_UnitsTestCase(TestCase):
         unit1 = UnitFactory(zipcode='99999')
         unit2 = UnitFactory(zipcode='11111')
 
+    def test_get_units(self):
+        user = User.objects.get(username='user1')
+        req = RequestFactory().get('/')
+        req.user = user
+        resp = views.get_units(req)
+        jsonresp = json.loads(resp.content)
+        unit1 = jsonresp[0]
+        unit2 = jsonresp[1]
+
+        self.assertEqual(unit1["id"], 1)
+        self.assertEqual(unit1["zipcode"], 99999)
+        self.assertEqual(unit2["id"], 2)
+        self.assertEqual(unit2["zipcode"], 11111)
+    
     def test_get_units_neg(self):
         user = User.objects.get(username='user2')
         req = RequestFactory().get('/')
         req.user = user
         resp = views.get_units(req)
-        self.assertEqual(resp.content, b'[]')
+        self.assertEqual(json.loads(resp.content), [])
+
+    
 
 
 
