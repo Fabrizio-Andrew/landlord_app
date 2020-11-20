@@ -17,11 +17,18 @@ class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
 
+
+
 class UnitFactory(DjangoModelFactory):
     class Meta:
         model = Unit
-
+        
     owner = factory.Iterator(User.objects.filter(username='user1'))
+    nickname = factory.Faker('first_name')
+    address_line1 = factory.Faker('street_address')
+    city = factory.Faker('city')
+    state = factory.Faker('state')
+    zipcode = factory.Faker('postcode')
 
 
 # Test Cases:
@@ -49,8 +56,8 @@ class Get_UnitsTestCase(TestCase):
         user2 = UserFactory(username='user2')
 
         # Create Units:
-        unit1 = UnitFactory(zipcode='99999')
-        unit2 = UnitFactory(zipcode='11111')
+        unit1 = UnitFactory(zipcode='11111')
+        unit2 = UnitFactory(zipcode='22222')
 
     def test_get_units(self):
         user = User.objects.get(username='user1')
@@ -61,10 +68,26 @@ class Get_UnitsTestCase(TestCase):
         unit1 = jsonresp[0]
         unit2 = jsonresp[1]
 
+        # Validate unit1
         self.assertEqual(unit1["id"], 1)
-        self.assertEqual(unit1["zipcode"], 99999)
+        self.assertEqual(unit1["owner"], 1)
+        self.assertEqual(type(unit1["nickname"]), str)
+        self.assertEqual(type(unit1["address_line1"]), str)
+        self.assertEqual(unit1["address_line2"], None)
+        self.assertEqual(type(unit1["city"]), str)
+        self.assertEqual(type(unit1["state"]), str)
+        self.assertEqual(unit1["zipcode"], 11111)
+
+        # Validate unit2
         self.assertEqual(unit2["id"], 2)
-        self.assertEqual(unit2["zipcode"], 11111)
+        self.assertEqual(unit2["owner"], 1)
+        self.assertEqual(type(unit2["nickname"]), str)
+        self.assertEqual(type(unit2["address_line1"]), str)
+        self.assertEqual(unit2["address_line2"], None)
+        self.assertEqual(type(unit2["city"]), str)
+        self.assertEqual(type(unit2["state"]), str)
+        self.assertEqual(unit2["zipcode"], 22222)
+
     
     def test_get_units_neg(self):
         user = User.objects.get(username='user2')
