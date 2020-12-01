@@ -24,11 +24,11 @@ os: linux
 #   may cause associated deployments to fail.
 files:
   - source: /landlord_app
-    destination: /landlord_app
+    destination: /landlord/landlord_app
   - source: /polls
-    destination: /polls
+    destination: /landlord/polls
   - source: manage.py
-    destination: manage.py
+    destination: /landlord/manage.py
 # For deployments to Amazon Linux, Ubuntu Server, or RHEL instances,
 #   you can specify a "permissions" 
 #   section here that describes special permissions to apply to the files 
