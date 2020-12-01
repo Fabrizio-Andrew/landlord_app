@@ -23,12 +23,12 @@ os: linux
 #   "files" section altogether. A blank or incomplete "files" section
 #   may cause associated deployments to fail.
 files:
-  - source: /landlord_app
-    destination: /landlord/landlord_app
-  - source: /polls
-    destination: /landlord/polls
-  - source: manage.py
-    destination: /landlord/manage.py
+  - source: ~/landlord_app
+    destination: ~/landlord/landlord_app
+  - source: ~/polls
+    destination: ~/landlord/polls
+  - source: ~/manage.py
+    destination: ~/landlord/manage.py
 # For deployments to Amazon Linux, Ubuntu Server, or RHEL instances,
 #   you can specify a "permissions" 
 #   section here that describes special permissions to apply to the files 
