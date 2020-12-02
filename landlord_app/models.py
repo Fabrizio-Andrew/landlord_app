@@ -10,6 +10,9 @@ class User(AbstractUser):
     state = models.CharField(max_length=20)
     zipcode = models.PositiveIntegerField()
 
+    def __str__(self):
+        return f"<{self.pk}: {self.username}>"
+    
     def serialize(self):
         return {
             "id": self.id,
@@ -22,13 +25,36 @@ class User(AbstractUser):
         }
 
 
+class State(models.Model):
+    abbrev = models.CharField(max_length=2, primary_key=True)
+    name = models.CharField(max_length=20)
+    failtopay = models.BooleanField()
+    failtopaydays = models.IntegerField()
+    failtopaynotice = models.CharField(max_length=20)
+    failtopaynoticedays = models.IntegerField()
+    posethreat = models.BooleanField()
+    posethreatnotice = models.CharField(max_length=20)
+    posethreatnoticedays = models.IntegerField()
+    violatelease = models.BooleanField()
+    violateleasenotice = models.CharField(max_length=20)
+    violateleasenoticedays = models.IntegerField()
+
+    def __str__(self):
+        return f"<{self.pk}>"
+
+
 class Unit(models.Model):
     nickname = models.CharField(max_length=40)
     address_line1 = models.CharField(max_length=120)
     address_line2 = models.CharField(max_length=120, blank=True, null=True)
     city = models.CharField(max_length=40)
-    state = models.CharField(max_length=20)
     zipcode = models.PositiveIntegerField()
+    state = models.ForeignKey(
+        'State',
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False
+    )
     owner = models.ForeignKey(
         'User',
         on_delete=models.CASCADE,
@@ -36,7 +62,18 @@ class Unit(models.Model):
         null=False
     )
 
+    def __str__(self):
+        return f"<{self.pk}: owned by {self.owner}>"
+
     def serialize(self):
+        tenantlist = []
+        for tenant in Tenant.objects.filter(Unit=self):
+            ten = {
+                "id": tenant.pk,
+                "first_name": tenant.tenant_first,
+                "last_name": tenant.tenant_last,
+                }
+            tenantlist.append(ten)
         return {
             "id": self.id,
             "nickname": self.nickname,
@@ -45,7 +82,8 @@ class Unit(models.Model):
             "city": self.city,
             "state": self.state,
             "zipcode": self.zipcode,
-            "owner": self.owner.id
+            "owner": self.owner.id,
+            "tenants": tenantlist
         }
 
 
@@ -61,6 +99,9 @@ class Tenant(models.Model):
         blank=False,
         null=False
     )
+
+    def __str__(self):
+        return f"<{self.pk}: {self.tenant_first} {self.tenant_last}>"
 
 
 class Lease(models.Model):
@@ -103,3 +144,4 @@ class Evict_Notice(models.Model):
     notice_type = models.CharField(max_length=40)
     date_sent = models.DateField(auto_now=False, auto_now_add=False)
     delivery_method = models.CharField(max_length=40)
+
