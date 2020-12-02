@@ -116,3 +116,6 @@ def save_unit(request):
         'units': util.list_units_detailed
 
     })
+
+def eviction_tree(request):
+    return render(request, 'landlord_app/evict_tree.html')

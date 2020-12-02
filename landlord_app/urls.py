@@ -26,5 +26,6 @@ urlpatterns = [
     path("landing", views.landing_page, name="landing"),
     path("getunits", views.get_units, name="getunits"),
     path('addunit', views.add_unit, name='addunit'),
-    path('saveunit', views.save_unit, name='saveunit')
+    path('saveunit', views.save_unit, name='saveunit'),
+    path('evictiontree', views.eviction_tree, name='evictiontree')
 ]
