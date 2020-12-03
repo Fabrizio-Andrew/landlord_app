@@ -1,9 +1,13 @@
+
+// const e = React.createElement;
+
 class Unit extends React.Component {
 
     constructor(props) {
         super(props);
+ 
         this.state = {
-            unit: null
+            unit: null,
         };
     }
 
@@ -36,31 +40,30 @@ class UnitList extends React.Component {
     
     constructor(props) {
         super(props);
+ 
         this.state = {
-            list: null
+            units: [],
         };
     }
-    
+ 
+    componentDidMount() {
+        fetch("/getunits")
+            .then(response => response.json())
+            .then(data => this.setState({ units: data }));
+    }
+ 
     render() {
+        const { units } = this.state;
+     
         return (
-            <div> 
-                {result.map((unit) => <Unit unit={unit} />)}
-            </div>
+            <ul>
+                {units.map(unit =>
+                    <Unit unit={unit} />
+                )}
+            </ul>
         );
     }
-};
+}
 
-
-fetch('/getunits')
-.then(response => response.json())
-.then(result => {
-    console.log(result);
-    return <UnitList list={result} />
-});
-    
-//        console.log(unit);
-
-
-
-//    ReactDOM.render(<Unit unit={unit} />, document.querySelector("#unit_list"));
-//})
+const div = document.querySelector('#unit-list');
+ReactDOM.render(React.createElement(UnitList), div);
