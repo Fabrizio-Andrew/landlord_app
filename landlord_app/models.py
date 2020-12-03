@@ -38,9 +38,31 @@ class State(models.Model):
     violatelease = models.BooleanField()
     violateleasenotice = models.CharField(max_length=20)
     violateleasenoticedays = models.IntegerField()
+    mtom = models.BooleanField()
+    mtomnotice = models.CharField(max_length=20)
+    mtomnoticedays = models.IntegerField()
 
     def __str__(self):
         return f"<{self.pk}>"
+
+    def serialize(self):
+        return {
+            "id": self.abbrev,
+            "name": self.name,
+            "failtopay": self.failtopay,
+            "failtopaydays": self.failtopaydays,
+            "failtopaynotice": self.faltopaynotice,
+            "failtopaynoticedays": self.failtopaynoticedays,
+            "posethreat": self.posethreat,
+            "posethreatnotice": self.posethreatnotice,
+            "posethreatnoticedays": self.posethreatnoticedays,
+            "violatelease": self.violatelease,
+            "violateleasenotice": self.violateleasenotice,
+            "violateleasenoticedays": self.violateleasenoticedays,
+            "mtom": self.mtom,
+            "mtomnotice": self.mtomnotice,
+            "mtomnoticedays": self.mtomnoticedays
+        }
 
 
 class Unit(models.Model):
