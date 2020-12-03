@@ -51,7 +51,7 @@ class State(models.Model):
             "name": self.name,
             "failtopay": self.failtopay,
             "failtopaydays": self.failtopaydays,
-            "failtopaynotice": self.faltopaynotice,
+            "failtopaynotice": self.failtopaynotice,
             "failtopaynoticedays": self.failtopaynoticedays,
             "posethreat": self.posethreat,
             "posethreatnotice": self.posethreatnotice,
@@ -102,7 +102,7 @@ class Unit(models.Model):
             "address_line1": self.address_line1,
             "address_line2": self.address_line2,
             "city": self.city,
-            "state": self.state,
+            "state": self.state.pk,
             "zipcode": self.zipcode,
             "owner": self.owner.id,
             "tenants": tenantlist

@@ -7,7 +7,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from landlord_app import util
 
-from .models import User, Unit
+from .models import User, Unit, State
 
 # Here's some views:
 
@@ -119,3 +119,12 @@ def save_unit(request):
 
 def eviction_tree(request):
     return render(request, 'landlord_app/evict_tree.html')
+
+def state_rules(request, state):
+    """
+    Given a state abbreviation, provides a JSON output of relevant laws for that state.
+    """
+    print(state)
+    requestedstate = State.objects.get(pk=state.upper())
+    serialized = requestedstate.serialize()
+    return JsonResponse(serialized, safe=False)

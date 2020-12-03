@@ -4,12 +4,12 @@ from . import views
 from django.contrib.auth.models import AnonymousUser
 from factory.django import DjangoModelFactory
 from django.shortcuts import render
-from .models import User, Unit
+from .models import User, Unit, State
 from django.urls import reverse
 import json
 
 
-# Model Factories:
+###################################### MODEL FACTORIES ######################################
 
 
 # User Factory doesn't work - see issue at https://github.com/FactoryBoy/factory_boy/issues/654
@@ -32,13 +32,67 @@ class UnitFactory(DjangoModelFactory):
     nickname = factory.Faker('first_name')
     address_line1 = factory.Faker('street_address')
     city = factory.Faker('city')
-    state = factory.Faker('state')
+    state = State.objects.get(pk='MD')
     zipcode = factory.Faker('postcode')
 
+class StateFactory(DjangoModelFactory):
+    class Meta:
+        model = State
 
-# Test Cases:
+    abbrev = 'MD'
+    name = 'Maryland'
+    failtopay = True
+    failtopaydays = 1
+    failtopaynotice = 'Letter'
+    failtopaynoticedays = 30
+    posethreat = True
+    posethreatnotice = 'Letter'
+    posethreatnoticedays = 14
+    violatelease = True
+    violateleasenotice = 'Letter'
+    violateleasenoticedays = 30
+    mtom = True
+    mtomnotice = 'Letter'
+    mtomnoticedays = 30
+
+
+
+###################################### TEST CASES ######################################
+
+class StateRulesTestCase(TestCase):
+
+    # These test cases are failing for some reason
+
+    def setup(self):
+
+        # Create State
+        teststate = StateFactory(abbrev='MD')
+        print(teststate)
+
+#    def test_staterules(self):
+
+#        req = RequestFactory()
+#        state = State.objects.get(abbrev='MD')
+#        print(state)
+#        stateid = state.pk
+#        print(stateid)
+#        resp = views.state_rules(req, stateid)
+#        self.assertEqual(resp.status_code, 200)
+#        self.assertEqual(resp.content["name"], 'Maryland')
+
+#    def test_staterules_neg(self):
+#        req = RequestFactory().get('/rules/zz')
+#        resp = views.state_rules(req, 'zz')
+#        self.assertEqual(resp.status_code, 500)
+
+
 
 class RequestTestCase(TestCase):
+
+    def setup(self):
+
+        # Create State
+        teststate = StateFactory()
 
     # https://blog.bitlabstudio.com/proper-unit-tests-for-your-django-views-b4a1730a922e
     def test_index(self):
@@ -51,11 +105,19 @@ class RequestTestCase(TestCase):
         req.user = UserFactory()
         resp = views.landing_page(req)
         self.assertEqual(resp.status_code, 200)
+    
+    def test_evictiontree(self):
+        req = RequestFactory().get('/evictiontree')
+        resp = views.eviction_tree(req)
+        self.assertEqual(resp.status_code, 200)
 
 
 class Get_UnitsTestCase(TestCase):
     
     def setUp(self):
+
+        # Create State
+        teststate = StateFactory()
 
         # Create Users:
         user1 = UserFactory(username='user1', zipcode='11111')
