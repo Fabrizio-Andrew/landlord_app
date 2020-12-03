@@ -32,7 +32,7 @@ class UnitFactory(DjangoModelFactory):
     nickname = factory.Faker('first_name')
     address_line1 = factory.Faker('street_address')
     city = factory.Faker('city')
-    state = State.objects.get(pk='MD')
+    state = factory.Iterator(State.objects.filter(pk='MD'))
     zipcode = factory.Faker('postcode')
 
 class StateFactory(DjangoModelFactory):
@@ -61,29 +61,21 @@ class StateFactory(DjangoModelFactory):
 
 class StateRulesTestCase(TestCase):
 
-    # These test cases are failing for some reason
+    # This test case is failing for some reason
 
     def setup(self):
 
         # Create State
-        teststate = StateFactory(abbrev='MD')
+        teststate = StateFactory(abbrev='MD').pk
         print(teststate)
 
-#    def test_staterules(self):
+    def test_staterules(self):
 
-#        req = RequestFactory()
-#        state = State.objects.get(abbrev='MD')
-#        print(state)
-#        stateid = state.pk
-#        print(stateid)
-#        resp = views.state_rules(req, stateid)
-#        self.assertEqual(resp.status_code, 200)
-#        self.assertEqual(resp.content["name"], 'Maryland')
-
-#    def test_staterules_neg(self):
-#        req = RequestFactory().get('/rules/zz')
-#        resp = views.state_rules(req, 'zz')
-#        self.assertEqual(resp.status_code, 500)
+        req = RequestFactory()
+        state = 'md'
+        resp = views.state_rules(req, state)
+        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.content["name"], 'Maryland')
 
 
 

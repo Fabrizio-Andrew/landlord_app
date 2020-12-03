@@ -124,7 +124,6 @@ def state_rules(request, state):
     """
     Given a state abbreviation, provides a JSON output of relevant laws for that state.
     """
-    print(state)
-    requestedstate = State.objects.get(pk=state.upper())
+    requestedstate = State.objects.get(abbrev=state.upper())
     serialized = requestedstate.serialize()
     return JsonResponse(serialized, safe=False)
