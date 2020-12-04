@@ -89,12 +89,13 @@ class Unit(models.Model):
 
     def serialize(self):
         tenantlist = []
-        for tenant in Tenant.objects.filter(Unit=self):
-            ten = {
-                "id": tenant.pk,
-                "first_name": tenant.tenant_first,
-                "last_name": tenant.tenant_last,
-                }
+        for tenant in Tenant.objects.filter(unit=self):
+#            ten = {
+#                "id": tenant.pk,
+#                "first_name": tenant.tenant_first,
+#                "last_name": tenant.tenant_last,
+#                }
+            ten = tenant.serialize()
             tenantlist.append(ten)
         return {
             "id": self.id,
@@ -115,15 +116,33 @@ class Tenant(models.Model):
     tenant_email = models.EmailField(max_length=254)
     tenant_start = models.DateField(auto_now=False, auto_now_add=False, default=date.today)
     tenant_end = models.DateField(auto_now=False, auto_now_add=False, default=date.today)
-    Unit = models.ForeignKey(
+    unit = models.ForeignKey(
         'Unit',
         on_delete=models.CASCADE,
         blank=False,
         null=False
     )
+    lease = models.ForeignKey(
+        'Lease',
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
+    )
 
     def __str__(self):
         return f"<{self.pk}: {self.tenant_first} {self.tenant_last}>"
+
+    def serialize(self):
+        l = self.lease.serialize()
+        return {
+            "id": self.pk,
+            "tenant_first": self.tenant_first,
+            "tenant_last": self.tenant_last,
+            "tenant_email": self.tenant_email,
+            "tenant_start": self.tenant_start,
+            "tenant_end": self.tenant_end,
+            "lease": l
+        }
 
 
 class Lease(models.Model):
@@ -131,15 +150,30 @@ class Lease(models.Model):
     start_date = models.DateField(auto_now=False, auto_now_add=False)
     end_date = models.DateField(auto_now=False, auto_now_add=False)
     date_signed = models.DateField(auto_now=False, auto_now_add=False)
-    electric_ind = models.BooleanField()
-    water_ind = models.BooleanField()
-    garbage_ind = models.BooleanField()
+    electric_ind = models.BooleanField(null=True, blank=True)
+    water_ind = models.BooleanField(null=True, blank=True)
+    garbage_ind = models.BooleanField(null=True, blank=True)
 #    lease_img = ImageField()
-    petfee_amt = models.DecimalField(max_digits=9, decimal_places=2)
-    petfee_type = models.CharField(max_length=1)
-    othfee_name = models.CharField(max_length=40)
-    othfee_amt = models.DecimalField(max_digits=9, decimal_places=2)
-    rollover = models.CharField(max_length=1)
+    petfee_amt = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
+    petfee_type = models.CharField(max_length=1, null=True, blank=True)
+    othfee_name = models.CharField(max_length=40, null=True, blank=True)
+    othfee_amt = models.DecimalField(max_digits=9, decimal_places=2, null=True, blank=True)
+    rollover = models.CharField(max_length=1, null=True, blank=True)
+
+    def __str__(self):
+        return f"<{self.pk}: {self.rent_amount}/month {self.start_date} to {self.end_date}>"
+
+    def serialize(self):
+        return {
+            "id": self.pk,
+            "rent_amount": self.rent_amount,
+            "start_date": self.start_date,
+            "end_date": self.end_date,
+            "date_signed": self.date_signed,
+            "electric_ind": self.electric_ind,
+            "water_ind": self.water_ind,
+            "garbage_ind": self.garbage_ind,
+        }
 
 
 class Tenant_Payment(models.Model):
