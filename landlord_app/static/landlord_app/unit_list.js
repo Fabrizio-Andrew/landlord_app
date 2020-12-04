@@ -33,6 +33,12 @@ class Unit extends React.Component {
     }
 }
 
+class AddUnitButton extends React.Component {
+    render() {
+        return (<button type="button" class="btn btn-outline-primary" id="add-unit">Add Unit +</button>)
+    }
+}
+
 class UnitList extends React.Component {
     
     constructor(props) {
@@ -53,13 +59,14 @@ class UnitList extends React.Component {
     render() {
         const { units } = this.state;
      
-        return (
+        return [
             <ul>
                 {units.map(unit =>
                     <Unit unit={unit} />
                 )}
-            </ul>
-        );
+            </ul>,
+            <AddUnitButton />
+        ];
     }
 }
 
