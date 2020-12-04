@@ -1,6 +1,3 @@
-
-// const e = React.createElement;
-
 class Unit extends React.Component {
 
     constructor(props) {
@@ -45,7 +42,8 @@ class UnitList extends React.Component {
             units: [],
         };
     }
- 
+
+// https://www.robinwieruch.de/react-fetching-data 
     componentDidMount() {
         fetch("/getunits")
             .then(response => response.json())
