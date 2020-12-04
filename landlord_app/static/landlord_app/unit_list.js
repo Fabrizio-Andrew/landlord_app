@@ -9,6 +9,20 @@ class Unit extends React.Component {
     }
 
     render() {
+
+        // If this Unit has a tenant, display it
+        if (this.props.unit["tenants"].length > 0) {
+            var tenant = <p className="card-text">Tenant: {this.props.unit["tenants"][0]["tenant_first"]} {this.props.unit["tenants"][0]["tenant_last"]}</p>
+            var lease = this.props.unit["tenants"][0]["lease"]
+
+            // If this tenant has a lease, display it.  Otherwise, display "month-to-month"
+            if (typeof(lease) != 'undefined' && lease != null) {
+                var leaseline = <p className="card-text">Rent: {lease["rent_amount"]}  {lease["start_date"]} to {lease["end_date"]}</p>    
+            } else {
+                var leaseline = <p className="card-text">Month-to-Month</p>    
+            }
+        }
+
         return (
             <div className="card mb-3">
                 <div className="row no-gutters">
@@ -21,8 +35,9 @@ class Unit extends React.Component {
                     <div className="col-md-8">
                         <div className="card-body">
                             <h5 className="card-title">{this.props.unit["nickname"]}</h5>
-                            <p className="card-text">{this.props.unit["address_line1"]}, {this.props.unit["address_line2"]}</p>
-                            <p className="card-text">{this.props.unit["city"]}, {this.props.unit["state"]} {this.props.unit["zipcode"]}</p>
+                            <p className="card-text">{this.props.unit["address_line1"]}, {this.props.unit["address_line2"]} {this.props.unit["city"]}, {this.props.unit["state"]} {this.props.unit["zipcode"]}</p>
+                            {tenant}
+                            {leaseline}
                             <p className="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
                             <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p>
                         </div>
@@ -34,8 +49,31 @@ class Unit extends React.Component {
 }
 
 class AddUnitButton extends React.Component {
+
     render() {
-        return (<button type="button" class="btn btn-outline-primary" id="add-unit">Add Unit +</button>)
+        return (<button onClick={this.show_form} type="button" class="btn btn-outline-primary" id="add-unit">Add Unit +</button>);
+    }
+
+    show_form() {
+
+        // Hide the Add Unit Button
+        document.querySelector('#add-unit').style.display = 'none';
+
+        // Add a new div to hold our Add Unit Form
+        var formdiv = document.createElement('div');
+        div.append(formdiv);
+
+        // Display the Add Unit Form Component
+        ReactDOM.render(React.createElement(AddUnitForm), formdiv);
+    }
+}
+
+class AddUnitForm extends React.Component {
+    
+    // Actually... this should probably be broken out into it's own html page...
+    render() {
+
+        return(<p>Put a form here!</p>);
     }
 }
 
