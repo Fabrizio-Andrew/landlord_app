@@ -5,8 +5,9 @@ class Unit extends React.Component {
  
         this.state = {
             unit: this.props.unit,
-            showcontent: true,
-            showeditform: false
+            showcontent: this.props.showcontent,
+            showeditform: this.props.showeditform,
+            newunit: this.props.newunit
         };
         this.edit_click = this.edit_click.bind(this);
     }
@@ -60,6 +61,7 @@ class Unit extends React.Component {
                     </div>
                 }
                 {this.state.showeditform && <EditUnitForm unit={this.state.unit} callback={this.EditUnitSubmit} />}
+                {this.state.newunit && <EditUnitForm unit={this.state.unit} callback={this.NewUnitSubmit} />}
             </div>
         );
     }
@@ -82,6 +84,15 @@ class Unit extends React.Component {
             showcontent: true,
             showeditform: false
         });
+    }
+
+    NewUnitSubmit = (childunit) => {
+        this.setState({
+            unit: childunit,
+            showcontent: true,
+            newunit: false,
+        });
+        this.props.callback(childunit);
     }
 
 };
@@ -112,12 +123,11 @@ class EditUnitForm extends React.Component {
             }
         }));
     }
-
+    // TO-DO: Hook this up to back end
     handle_submit() {
-
 //        fetch('/updateunit')
 //        .then(
-            this.props.callback(this.state.unit)
+        this.props.callback(this.state.unit);
 //            );
 
 //        ))
@@ -268,7 +278,10 @@ class UnitList extends React.Component {
  
         this.state = {
             units: [],
-        };
+            newunit: false
+        }
+        this.add_unit = this.add_unit.bind(this);
+        this.new_unit = this.new_unit.bind(this);
     }
 
 // https://www.robinwieruch.de/react-fetching-data 
@@ -282,13 +295,30 @@ class UnitList extends React.Component {
         const { units } = this.state;
      
         return [
-            <ul>
-                {units.map(unit =>
-                    <Unit unit={unit} />
-                )}
-            </ul>,
-            <AddUnitButton />
+            <div>
+                <ul>
+                    {units.map(unit =>
+                        <Unit unit={unit} showcontent={true} showeditform={false} newunit={false} />
+                    )}
+                    {this.state.newunit && <Unit unit={{"tenants": ""}} showcontent={false} showeditform={false} newunit={true} callback={this.add_unit} />}
+                </ul>
+                {this.state.newunit ? '' : <button onClick={this.new_unit} type="button" class="btn btn-outline-primary" id="add-unit">Add Unit +</button>}
+            </div>
+
         ];
+    }
+
+    new_unit() {
+        this.setState({
+            newunit: true
+        });
+    }
+
+    add_unit(childunit) {
+        this.setState({
+            units: this.state.units.concat(childunit),
+            newunit: false
+        });
     }
 }
 
