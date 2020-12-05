@@ -4,7 +4,7 @@ class Unit extends React.Component {
         super(props);
  
         this.state = {
-            unit: '',
+            unit: null,
             showcontent: true,
             editclicked: false
         };
@@ -59,7 +59,7 @@ class Unit extends React.Component {
                         </div>
                     </div>
                 }
-                {this.state.editclicked && <EditUnitForm />}
+                {this.state.editclicked && <EditUnitForm unit={this.props.unit}/>}
             </div>
         );
     }
@@ -72,6 +72,7 @@ class Unit extends React.Component {
             editclicked: true
         });
     }
+
 };
 
 
@@ -84,7 +85,20 @@ class EditUnitForm extends React.Component {
         this.state = {
             unit: null,
         };
+        this.handle_change = this.handle_change.bind(this);
+    };
+
+    // For some reason, this function doesn't seem to be bound to my state
+    handle_change(event) {
+        const name = event.target.name;
+        var value = event.target.value;
+
+        console.log(name);
+        console.log(value);
+        console.log(this.state);
+        this.setState({nickname: value});
     }
+    
 
     render() {
         return (
@@ -101,31 +115,31 @@ class EditUnitForm extends React.Component {
                             <div className="input-group-prepend">
                                 <span className="input-group-text" id="inputGroup-sizing-sm">Nickname</span>
                             </div>
-                            <input type="text" className="form-control" aria-label="Nickname" aria-describedby="inputGroup-sizing-sm"></input>
+                            <input name="nickname" type="text" value={this.props.unit["nickname"]} onChange={this.handle_change.bind(this)} className="form-control" aria-label="Nickname" aria-describedby="inputGroup-sizing-sm"></input>
                         </div>
                         <div className="input-group input-group-sm mb-3">
                             <div className="input-group-prepend">
                                 <span className="input-group-text" id="inputGroup-sizing-sm">Street Address Line 1</span>
                             </div>
-                            <input type="text" className="form-control" aria-label="Street Address Line 1" aria-describedby="inputGroup-sizing-sm"></input>
+                            <input name="address_line1" type="text" value={this.props.unit["address_line1"]} onChange={this.handle_change} className="form-control" aria-label="Street Address Line 1" aria-describedby="inputGroup-sizing-sm"></input>
                         </div>
                         <div className="input-group input-group-sm mb-3">
                             <div className="input-group-prepend">
                                 <span className="input-group-text" id="inputGroup-sizing-sm">Street Address Line 2</span>
                             </div>
-                            <input type="text" className="form-control" aria-label="Street Address Line 2" aria-describedby="inputGroup-sizing-sm"></input>
+                            <input name="address_line2" type="text" value={this.props.unit["address_line2"]} onChange={this.handle_change} className="form-control" aria-label="Street Address Line 2" aria-describedby="inputGroup-sizing-sm"></input>
                         </div>
                         <div className="input-group input-group-sm mb-3">
                             <div className="input-group-prepend">
                                 <span className="input-group-text" id="inputGroup-sizing-sm">City</span>
                             </div>
-                            <input type="text" className="form-control" aria-label="City" aria-describedby="inputGroup-sizing-sm"></input>
+                            <input name="city" type="text" value={this.props.unit["city"]} onChange={this.handle_change} className="form-control" aria-label="City" aria-describedby="inputGroup-sizing-sm"></input>
                         </div>
                         <div className="input-group input-group-sm mb-3">
                             <div className="input-group-prepend">
                                 <span className="input-group-text" id="inputGroup-sizing-sm">State</span>
                             </div>
-                            <select class="form-control" aria-label="Street Address Line 1" aria-describedby="inputGroup-sizing-sm">
+                            <select name="state" value={this.props.unit["state"]} onChange={this.handle_change} class="form-control" aria-label="Street Address Line 1" aria-describedby="inputGroup-sizing-sm">
                                 <option value="AL">Alabama</option>
                                 <option value="AK">Alaska</option>
                                 <option value="AZ">Arizona</option>
@@ -183,7 +197,7 @@ class EditUnitForm extends React.Component {
                             <div className="input-group-prepend">
                                 <span className="input-group-text" id="inputGroup-sizing-sm">Zip Code</span>
                             </div>
-                            <input type="text" className="form-control" aria-label="Zip Code" aria-describedby="inputGroup-sizing-sm"></input>
+                            <input name="zipcode" type="text" value={this.props.unit["zipcode"]} onChange={this.handle_change} className="form-control" aria-label="Zip Code" aria-describedby="inputGroup-sizing-sm"></input>
                         </div>
                         
 
