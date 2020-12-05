@@ -118,7 +118,7 @@ def new_unit(request):
         owner=request.user
     )
     newunit.save()
-    return JsonResponse({"message": "Unit saved successfully.", status=201})
+    return JsonResponse({"message": "Unit saved successfully."}, status=201)
 
 @login_required
 def update_unit(request):
@@ -132,7 +132,7 @@ def update_unit(request):
 
     # Retrieve the specified Unit Object
     data = json.loads(request.body)
-    unit = Unit.objects.get(id=data.["unit_id"])
+    unit = Unit.objects.get(id=data["unit_id"])
 
     # Confirm that the requestor is the owner of the unit
     if request.user == unit.owner:
