@@ -4,7 +4,7 @@ class Unit extends React.Component {
         super(props);
  
         this.state = {
-            unit: null,
+            unit: this.props.unit,
             showcontent: true,
             editclicked: false
         };
@@ -33,7 +33,7 @@ class Unit extends React.Component {
         var uniqueid = `card-content-${this.props.unit["id"]}`;
 
         return (
-            <div key={this.props.unit["id"]} className="card mb-3">
+            <div key={this.state.unit["id"]} className="card mb-3">
                 {this.state.showcontent && 
                     <div className="row no-gutters" id={uniqueid}>
                         <div className="col-md-3" style={{backgroundColor: "grey"}}>
@@ -44,8 +44,8 @@ class Unit extends React.Component {
                         </div>
                         <div className="col-md-7">
                             <div className="card-body">
-                                <h5 className="card-title">{this.props.unit["nickname"]}</h5>
-                                <p className="card-text">{this.props.unit["address_line1"]}, {this.props.unit["address_line2"]} {this.props.unit["city"]}, {this.props.unit["state"]} {this.props.unit["zipcode"]}</p>
+                                <h5 className="card-title">{this.state.unit["nickname"]}</h5>
+                                <p className="card-text">{this.state.unit["address_line1"]}, {this.state.unit["address_line2"]} {this.state.unit["city"]}, {this.state.unit["state"]} {this.state.unit["zipcode"]}</p>
                                 {tenant}
                                 {leaseline}
                             </div>
@@ -59,12 +59,14 @@ class Unit extends React.Component {
                         </div>
                     </div>
                 }
-                {this.state.editclicked && <EditUnitForm unit={this.props.unit}/>}
+                {this.state.editclicked && <EditUnitForm unit={this.state.unit}/>}
             </div>
         );
     }
 
     edit_click() {
+
+        console.log(this.state);
         
         // Hide Unit Content and show the edit form
         this.setState({
@@ -83,12 +85,11 @@ class EditUnitForm extends React.Component {
         super(props);
  
         this.state = {
-            unit: null,
-        };
+            unit: this.props.unit,
+        }
         this.handle_change = this.handle_change.bind(this);
     };
 
-    // For some reason, this function doesn't seem to be bound to my state
     handle_change(event) {
         const name = event.target.name;
         var value = event.target.value;
@@ -96,7 +97,7 @@ class EditUnitForm extends React.Component {
         console.log(name);
         console.log(value);
         console.log(this.state);
-        this.setState({nickname: value});
+        this.setState({unit: {nickname: value}});
     }
     
 
@@ -115,31 +116,31 @@ class EditUnitForm extends React.Component {
                             <div className="input-group-prepend">
                                 <span className="input-group-text" id="inputGroup-sizing-sm">Nickname</span>
                             </div>
-                            <input name="nickname" type="text" value={this.props.unit["nickname"]} onChange={this.handle_change.bind(this)} className="form-control" aria-label="Nickname" aria-describedby="inputGroup-sizing-sm"></input>
+                            <input name="nickname" type="text" value={this.state.unit["nickname"]} onChange={this.handle_change.bind(this)} className="form-control" aria-label="Nickname" aria-describedby="inputGroup-sizing-sm"></input>
                         </div>
                         <div className="input-group input-group-sm mb-3">
                             <div className="input-group-prepend">
                                 <span className="input-group-text" id="inputGroup-sizing-sm">Street Address Line 1</span>
                             </div>
-                            <input name="address_line1" type="text" value={this.props.unit["address_line1"]} onChange={this.handle_change} className="form-control" aria-label="Street Address Line 1" aria-describedby="inputGroup-sizing-sm"></input>
+                            <input name="address_line1" type="text" value={this.state.unit["address_line1"]} onChange={this.handle_change} className="form-control" aria-label="Street Address Line 1" aria-describedby="inputGroup-sizing-sm"></input>
                         </div>
                         <div className="input-group input-group-sm mb-3">
                             <div className="input-group-prepend">
                                 <span className="input-group-text" id="inputGroup-sizing-sm">Street Address Line 2</span>
                             </div>
-                            <input name="address_line2" type="text" value={this.props.unit["address_line2"]} onChange={this.handle_change} className="form-control" aria-label="Street Address Line 2" aria-describedby="inputGroup-sizing-sm"></input>
+                            <input name="address_line2" type="text" value={this.state.unit["address_line2"]} onChange={this.handle_change} className="form-control" aria-label="Street Address Line 2" aria-describedby="inputGroup-sizing-sm"></input>
                         </div>
                         <div className="input-group input-group-sm mb-3">
                             <div className="input-group-prepend">
                                 <span className="input-group-text" id="inputGroup-sizing-sm">City</span>
                             </div>
-                            <input name="city" type="text" value={this.props.unit["city"]} onChange={this.handle_change} className="form-control" aria-label="City" aria-describedby="inputGroup-sizing-sm"></input>
+                            <input name="city" type="text" value={this.state.unit["city"]} onChange={this.handle_change} className="form-control" aria-label="City" aria-describedby="inputGroup-sizing-sm"></input>
                         </div>
                         <div className="input-group input-group-sm mb-3">
                             <div className="input-group-prepend">
                                 <span className="input-group-text" id="inputGroup-sizing-sm">State</span>
                             </div>
-                            <select name="state" value={this.props.unit["state"]} onChange={this.handle_change} class="form-control" aria-label="Street Address Line 1" aria-describedby="inputGroup-sizing-sm">
+                            <select name="state" value={this.state.unit["state"]} onChange={this.handle_change} class="form-control" aria-label="Street Address Line 1" aria-describedby="inputGroup-sizing-sm">
                                 <option value="AL">Alabama</option>
                                 <option value="AK">Alaska</option>
                                 <option value="AZ">Arizona</option>
@@ -197,7 +198,7 @@ class EditUnitForm extends React.Component {
                             <div className="input-group-prepend">
                                 <span className="input-group-text" id="inputGroup-sizing-sm">Zip Code</span>
                             </div>
-                            <input name="zipcode" type="text" value={this.props.unit["zipcode"]} onChange={this.handle_change} className="form-control" aria-label="Zip Code" aria-describedby="inputGroup-sizing-sm"></input>
+                            <input name="zipcode" type="text" value={this.state.unit["zipcode"]} onChange={this.handle_change} className="form-control" aria-label="Zip Code" aria-describedby="inputGroup-sizing-sm"></input>
                         </div>
                         
 
