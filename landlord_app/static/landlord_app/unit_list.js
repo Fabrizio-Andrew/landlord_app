@@ -6,7 +6,7 @@ class Unit extends React.Component {
         this.state = {
             unit: this.props.unit,
             showcontent: true,
-            editclicked: false
+            showeditform: false
         };
         this.edit_click = this.edit_click.bind(this);
     }
@@ -59,7 +59,7 @@ class Unit extends React.Component {
                         </div>
                     </div>
                 }
-                {this.state.editclicked && <EditUnitForm unit={this.state.unit}/>}
+                {this.state.showeditform && <EditUnitForm unit={this.state.unit} callback={this.EditUnitSubmit} />}
             </div>
         );
     }
@@ -71,7 +71,16 @@ class Unit extends React.Component {
         // Hide Unit Content and show the edit form
         this.setState({
             showcontent: false,
-            editclicked: true
+            showeditform: true
+        });
+    }
+
+    // https://medium.com/@ruthmpardee/passing-data-between-react-components-103ad82ebd17
+    EditUnitSubmit = (childunit) => {
+        this.setState({
+            unit: childunit,
+            showcontent: true,
+            showeditform: false
         });
     }
 
@@ -88,16 +97,30 @@ class EditUnitForm extends React.Component {
             unit: this.props.unit,
         }
         this.handle_change = this.handle_change.bind(this);
+        this.handle_submit = this.handle_submit.bind(this);
     };
 
     handle_change(event) {
         const name = event.target.name;
         var value = event.target.value;
 
-        console.log(name);
-        console.log(value);
-        console.log(this.state);
-        this.setState({unit: {nickname: value}});
+        //https://stackoverflow.com/questions/49348996/react-change-a-json-object-in-setstate
+        this.setState(prevState => ({
+            unit: {
+                ...prevState.unit,
+                [name]: value
+            }
+        }));
+    }
+
+    handle_submit() {
+
+//        fetch('/updateunit')
+//        .then(
+            this.props.callback(this.state.unit)
+//            );
+
+//        ))
     }
     
 
@@ -200,9 +223,7 @@ class EditUnitForm extends React.Component {
                             </div>
                             <input name="zipcode" type="text" value={this.state.unit["zipcode"]} onChange={this.handle_change} className="form-control" aria-label="Zip Code" aria-describedby="inputGroup-sizing-sm"></input>
                         </div>
-                        
-
-                        
+                        <button type="button" class="btn btn-primary" onClick={this.handle_submit}>Save</button>
                     </div>
                 </div>
             </div>
