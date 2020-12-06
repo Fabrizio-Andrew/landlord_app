@@ -16,7 +16,6 @@ class Unit extends React.Component {
 
         // If this Unit has a tenant, display it.  Otherwise, display "Vacant".
         if (this.props.unit["tenants"].length > 0) {
-            var tenant = <p className="card-text">Tenant: {this.props.unit["tenants"][0]["tenant_first"]} {this.props.unit["tenants"][0]["tenant_last"]}</p>;
             var remtenant = <div className="row no-gutters"><button type="button" class="btn btn-primary">Remove Tenant</button></div>;
             var lease = this.props.unit["tenants"][0]["lease"];
 
@@ -47,7 +46,7 @@ class Unit extends React.Component {
                             <div className="card-body">
                                 <h5 className="card-title">{this.state.unit["nickname"]}</h5>
                                 <p className="card-text">{this.state.unit["address_line1"]}, {this.state.unit["address_line2"]} {this.state.unit["city"]}, {this.state.unit["state"]} {this.state.unit["zipcode"]}</p>
-                                {tenant}
+                                <TenantList tenants={this.state.unit["tenants"]} />
                                 {leaseline}
                             </div>
                         </div>
@@ -281,7 +280,8 @@ class TenantList extends React.Component {
         this.state = {
             tenants: this.props.tenants,
             newtenant: false,
-            collapsed: true
+            collapsed: true,
+            vacant: this.props.vacant
         }
     }
 
@@ -289,21 +289,28 @@ class TenantList extends React.Component {
 
         const tenants = this.state.tenants
 
-        return [
+        if (typeof tenants !== 'undefined' && tenants.length > 0) { // THIS IS SHOWING ALL UNITS AS VACANT
+            return (
+                <div>
+                    {this.state.collapsed ?
+                        <Tenant tenant={tenants[0]} />
+                        :
+                        <ul>
+                            {tenants.map(tenant =>
+                                <Tenant tenant={tenant} />
+                            )}
+                            {this.state.newtenant && <Tenant newtenant={true} callback={this.add_tenant} />}
+                        </ul>
+                    }
+                    {this.state.newtenant ? '' : <button onClick={this.new_tenant} type="button" class="btn btn-outline-primary" id="add-tenant">Add Tenant +</button>}
+                </div>
+            );
+        }
+        return (
             <div>
-                {this.state.collapsed ?
-                    <Tenant tenant={tenants[0]} />
-                    :
-                    <ul>
-                        {tenants.map(tenant =>
-                            <Tenant tenant={tenant} />
-                        )}
-                        {this.state.newtenant && <Tenant newtenant={true} callback={this.add_tenant} />}
-                    </ul>
-                }
-                {this.state.newtenant ? '' : <button onClick={this.new_tenant} type="button" class="btn btn-outline-primary" id="add-unit">Add Tenant +</button>}
+                <p className="card-text">Vacant: <a href="#">Add a Tenant</a></p>
             </div>
-        ];
+        );
     }
 
     new_tenant() {
@@ -328,6 +335,28 @@ class Tenant extends React.Component {
         this.state = {
             tenant: this.props.tenant,
             editform: false
+        }
+    }
+
+    render() {
+        return [
+            <div className="row no-gutters">
+                <p className="card-text">Tenant: {this.props.tenant["tenant_first"]} {this.props.tenant["tenant_last"]} -- Email: {this.props.tenant["tenant_email"]}</p>
+                <a href="#">Edit</a>
+
+            </div>
+            
+        ]
+    }
+}
+
+class Lease extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            lease: this.props.lease,
         }
     }
 }
