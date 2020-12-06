@@ -61,8 +61,8 @@ class Unit extends React.Component {
                         </div>
                     </div>
                 }
-                {this.state.showeditform && <EditUnitForm unit={this.state.unit} callback={this.EditUnitSubmit} delete={this.DeleteUnit}/>}
-                {this.state.newunit && <EditUnitForm unit={this.state.unit} callback={this.NewUnitSubmit} newunit={true}/>}
+                {this.state.showeditform && <EditUnitForm unit={this.state.unit} callback={this.EditUnitSubmit} delete={this.DeleteUnit} />}
+                {this.state.newunit && <EditUnitForm unit={this.state.unit} callback={this.NewUnitSubmit} newunit={true} cancel={this.props.cancel} />}
             </div>
         );
     }
@@ -293,7 +293,11 @@ class EditUnitForm extends React.Component {
                             <input name="zipcode" type="text" value={this.state.unit["zipcode"]} onChange={this.handle_change} className="form-control" aria-label="Zip Code" aria-describedby="inputGroup-sizing-sm"></input>
                         </div>
                         <button type="button" class="btn btn-primary" onClick={this.handle_submit}>Save</button>
-                        <button type="button" class="btn btn-danger" onClick={this.delete_unit}>Delete Unit</button>
+                        {this.props.newunit ?
+                            <button type="button" class="btn btn-danger" onClick={this.props.cancel}>Cancel</button>
+                            :
+                            <button type="button" class="btn btn-danger" onClick={this.delete_unit}>Delete Unit</button>
+                        }
                     </div>
                 </div>
             </div>
@@ -512,7 +516,7 @@ class UnitList extends React.Component {
                     {units.map(unit =>
                         <Unit unit={unit} showcontent={true} showeditform={false} newunit={false} delete={this.delete_unit} />
                     )}
-                    {this.state.newunit && <Unit unit={{"tenants": ""}} showcontent={false} showeditform={false} newunit={true} callback={this.add_unit} delete={this.delete_unit} />}
+                    {this.state.newunit && <Unit unit={{"tenants": ""}} showcontent={false} showeditform={false} newunit={true} callback={this.add_unit} delete={this.delete_unit} cancel={this.cancel_unit} />}
                 </ul>
                 {this.state.newunit ? '' : <button onClick={this.new_unit} type="button" class="btn btn-outline-primary" id="add-unit">Add Unit +</button>}
             </div>
@@ -549,7 +553,21 @@ class UnitList extends React.Component {
         // Re-render the UnitList component
         ReactDOM.render(<UnitList />, div);
     }
+
+    cancel_unit = () => {
+        
+        // Set newunit flag back to false
+        this.setState({
+            newunit: false
+        });
+
+        // Re-render the UnitList component
+        ReactDOM.render(<UnitList />, div);
+    }
+
 }
+
+
 
 const div = document.querySelector('#unit-list');
 ReactDOM.render(React.createElement(UnitList), div);
