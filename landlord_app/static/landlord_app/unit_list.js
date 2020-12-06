@@ -149,7 +149,7 @@ class EditUnitForm extends React.Component {
         const name = event.target.name;
         var value = event.target.value;
 
-        //https://stackoverflow.com/questions/49348996/react-change-a-json-object-in-setstate
+        // https://stackoverflow.com/questions/49348996/react-change-a-json-object-in-setstate
         this.setState(prevState => ({
             unit: {
                 ...prevState.unit,
@@ -157,7 +157,7 @@ class EditUnitForm extends React.Component {
             }
         }));
     }
-    // TO-DO: Hook this up to back end
+
     handle_submit() {
         this.props.callback(this.state.unit);
     }
@@ -271,7 +271,6 @@ class EditUnitForm extends React.Component {
     
 };
 
-// TO-DO: Use this to replace the tenants field in the unit list
 class TenantList extends React.Component {
 
     constructor(props) {
@@ -280,28 +279,25 @@ class TenantList extends React.Component {
         this.state = {
             tenants: this.props.tenants,
             newtenant: false,
-            collapsed: true,
             vacant: this.props.vacant
         }
+        this.new_tenant = this.new_tenant.bind(this);
+        this.add_tenant = this.add_tenant.bind(this);
     }
 
     render() {
 
         const tenants = this.state.tenants
 
-        if (typeof tenants !== 'undefined' && tenants.length > 0) { // THIS IS SHOWING ALL UNITS AS VACANT
+        if (typeof tenants !== 'undefined' && tenants.length > 0) {
             return (
                 <div>
-                    {this.state.collapsed ?
-                        <Tenant tenant={tenants[0]} />
-                        :
                         <ul>
                             {tenants.map(tenant =>
-                                <Tenant tenant={tenant} />
+                                <Tenant tenant={tenant} showcontent={true} showeditform={false} newtenant={false} />
                             )}
-                            {this.state.newtenant && <Tenant newtenant={true} callback={this.add_tenant} />}
+                            {this.state.newtenant && <Tenant tenant={{"tenant_first": ""}} newtenant={true} callback={this.add_tenant} />}
                         </ul>
-                    }
                     {this.state.newtenant ? '' : <button onClick={this.new_tenant} type="button" class="btn btn-outline-primary" id="add-tenant">Add Tenant +</button>}
                 </div>
             );
@@ -334,19 +330,112 @@ class Tenant extends React.Component {
 
         this.state = {
             tenant: this.props.tenant,
-            editform: false
+            showcontent: this.props.showcontent,
+            showeditform: this.props.showeditform,
+            newtenant: this.props.newtenant
         }
     }
 
     render() {
         return [
-            <div className="row no-gutters">
-                <p className="card-text">Tenant: {this.props.tenant["tenant_first"]} {this.props.tenant["tenant_last"]} -- Email: {this.props.tenant["tenant_email"]}</p>
-                <a href="#">Edit</a>
+            <div>
+                {this.state.showcontent &&
+                    <div className="row no-gutters">
+                        <p className="card-text">Tenant: {this.props.tenant["tenant_first"]} {this.props.tenant["tenant_last"]} -- Email: {this.props.tenant["tenant_email"]}</p>
+                        <a href="#">Edit</a>
 
+                    </div>
+                }
+                {this.state.showeditform && <EditTenantForm unit={this.state.tenant} callback={this.EditTenantSubmit} />}
+                {this.state.newtenant && <EditTenantForm tenant={this.state.tenant} callback={this.NewTenantSubmit} />}
             </div>
             
         ]
+    }
+
+    NewTenantSubmit = (childtenant) => {
+        
+        // Retrieve the CSRF token from html
+        const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+        // POST data from childtenant to API
+//        fetch('/updatetenant', {
+ //           method: 'POST',
+//            headers: {'X-CSRFToken': csrftoken},
+//            body: JSON.stringify({childtenant})
+//            
+//        })
+//        .then(response => response.json())
+//        .then(result => {
+//            console.log(result);
+            
+            // Update state with tenant data and show/hide flags
+            this.setState({
+                tenant: childtenant,
+                showcontent: true,
+                newtenant: false,
+            });
+
+            // Pass new tenant back to TenantList
+            this.props.callback(childtenant);
+//        });        
+    }
+}
+
+
+class EditTenantForm extends React.Component {
+
+    constructor(props) {
+        super(props);
+ 
+        this.state = {
+            tenant: this.props.tenant,
+        }
+        this.handle_change = this.handle_change.bind(this);
+        this.handle_submit = this.handle_submit.bind(this);
+    };
+
+    handle_change(event) {
+        const name = event.target.name;
+        var value = event.target.value;
+
+        // https://stackoverflow.com/questions/49348996/react-change-a-json-object-in-setstate
+        this.setState(prevState => ({
+            tenant: {
+                ...prevState.tenant,
+                [name]: value
+            }
+        }));
+    }
+
+    handle_submit() {
+        this.props.callback(this.state.tenant);
+    }
+
+    render() {
+        return(
+            <div class="form-row">
+                <div className="input-group input-group-sm mb-3">
+                    <div className="input-group-prepend">
+                        <span className="input-group-text" id="inputGroup-sizing-sm">First</span>
+                    </div>
+                    <input name="tenant_first" type="text" value={this.state.tenant["tenant_first"]} onChange={this.handle_change.bind(this)} className="form-control" aria-label="tenant_first" aria-describedby="inputGroup-sizing-sm"></input>
+                </div>
+                <div className="input-group input-group-sm mb-3">
+                    <div className="input-group-prepend">
+                        <span className="input-group-text" id="inputGroup-sizing-sm">Last</span>
+                    </div>
+                    <input name="tenant_last" type="text" value={this.state.tenant["tenant_last"]} onChange={this.handle_change.bind(this)} className="form-control" aria-label="tenant_last" aria-describedby="inputGroup-sizing-sm"></input>
+                </div>
+                <div className="input-group input-group-sm mb-3">
+                    <div className="input-group-prepend">
+                        <span className="input-group-text" id="inputGroup-sizing-sm">Email</span>
+                    </div>
+                    <input name="tenant_email" type="text" value={this.state.tenant["tenant_email"]} onChange={this.handle_change.bind(this)} className="form-control" aria-label="tenant_email" aria-describedby="inputGroup-sizing-sm"></input>
+                </div>
+                <button type="button" class="btn btn-primary" onClick={this.handle_submit}>Save</button>
+            </div>
+        );
     }
 }
 
