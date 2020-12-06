@@ -98,55 +98,97 @@ def add_unit(request):
     return render(request, 'landlord_app/add_unit.html')
 
 @login_required
-def new_unit(request):
+def update_unit(request):
     """
     Given a request via POST, creates an instance of Unit with the request
     payload and saves the unit.
     """
     
-    if request.method != 'POST':
-        return render(request, 'landlord_app/add_unit.html')
+    if request.method == 'POST':
     
-    data = json.loads(request.body)
-    newunit = Unit(
-        nickname=data["nickname"],
-        address_line1=data["address.line1"],
-        address_line2=data["address_line2"],
-        city=data["city"],
-        state=data["state"],
-        zipcode=data["zipcode"],
-        owner=request.user
-    )
-    newunit.save()
-    return JsonResponse({"message": "Unit saved successfully."}, status=201)
+        data = json.loads(request.body)
+        print(data)
 
-@login_required
-def update_unit(request):
+        # Get the state object associate with the pk submitted from request
+        state = State.objects.get(pk=data["childunit"]["state"])
+
+        # Create an instance of Unit with attributes from request
+        newunit = Unit(
+            nickname=data["childunit"]["nickname"],
+            address_line1=data["childunit"]["address_line1"],
+            city=data["childunit"]["city"],
+            state=state,
+            zipcode=data["childunit"]["zipcode"],
+            owner=request.user
+        )
+
+        # Handle conditional address_line2 field
+        if 'address_line2' in data["childunit"].keys():
+            newunit.address_line2 = data["childunit"]["address_line2"]
+
+        newunit.save()
+        return JsonResponse({"message": "New unit saved successfully."}, status=201)
+    
+    elif request.method == 'PUT':
+
+        # Retrieve the specified Unit Object
+        data = json.loads(request.body)
+        print(data)
+        unit = Unit.objects.get(id=data["childunit"]["id"])
+
+        # Confirm that the requestor is the owner of the unit
+        if request.user == unit.owner:
+
+            # Get the state object associate with the pk submitted from request
+            state = State.objects.get(pk=data["childunit"]["state"])
+
+            # Update unit attributes
+            unit.nickname = data["childunit"]["nickname"]
+            unit.address_line1 = data["childunit"]["address_line1"]
+            unit.address_line2 = data["childunit"]["address_line2"]
+            unit.city = data["childunit"]["city"]
+            unit.state = state
+            unit.zipcode = data["childunit"]["zipcode"]
+
+            # Handls conditional address_line2 field
+            if 'address_line2' in data["childunit"].keys():
+                unit.address_line2 = data["childunit"]["address_line2"]
+
+            unit.save()
+            return JsonResponse({"message": "Unit updated successfully."}, status=201)
+        
+        return JsonResponse({"error": "User is not the owner of this unit."}, status=400)
+
+    else:
+        return render(request, 'landlord_app/add_unit.html')
+
+#@login_required
+#def update_unit(request):
     """
     Given an existing unit's ID and updated attributes, update the Unit object's
     attributes only if the currently logged-in user is the owner of the unit.
     """
 
-    if request.method != 'PUT':
-        return JsonResponse({"error": "PUT request required."}, status=400)
+#    if request.method != 'PUT':
+#        return JsonResponse({"error": "PUT request required."}, status=400)
 
     # Retrieve the specified Unit Object
-    data = json.loads(request.body)
-    unit = Unit.objects.get(id=data["unit_id"])
+#    data = json.loads(request.body)
+#    unit = Unit.objects.get(id=data["unit_id"])
 
     # Confirm that the requestor is the owner of the unit
-    if request.user == unit.owner:
+#    if request.user == unit.owner:
 
         # Update unit attributes and save
-        unit.nickname = data["nickname"]
-        unit.address_line1 = data["address_line1"]
-        unit.address_line2 = data["address_line2"]
-        unit.city = data["city"]
-        unit.zipcode = data["zipcode"]
-        unit.save()
-        return JsonResponse({"message": "Unit updated successfully."}, status=201)
+#        unit.nickname = data["childunit"]["nickname"]
+#        unit.address_line1 = data["childunit"]["address_line1"]
+#        unit.address_line2 = data["childunit"]["address_line2"]
+#        unit.city = data["childunit"]["city"]
+#        unit.zipcode = data["childunit"]["zipcode"]
+#        unit.save()
+#        return JsonResponse({"message": "Unit updated successfully."}, status=201)
     
-    return JsonResponse({"error": "User is not the owner of this unit."}, status=400)
+#    return JsonResponse({"error": "User is not the owner of this unit."}, status=400)
 
 
 

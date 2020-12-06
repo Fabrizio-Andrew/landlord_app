@@ -79,22 +79,57 @@ class Unit extends React.Component {
 
     // https://medium.com/@ruthmpardee/passing-data-between-react-components-103ad82ebd17
     EditUnitSubmit = (childunit) => {
-        this.setState({
-            unit: childunit,
-            showcontent: true,
-            showeditform: false
+
+        // Retrieve the CSRF token from html
+        const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+        // PUT data from childunit to API
+        fetch('/updateunit', {
+            method: 'PUT',
+            headers: {'X-CSRFToken': csrftoken},
+            body: JSON.stringify({childunit})
+            
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log(result);
+
+            // Update state with unit data and show/hide flags
+            this.setState({
+                unit: childunit,
+                showcontent: true,
+                showeditform: false
+            });
         });
     }
 
     NewUnitSubmit = (childunit) => {
-        this.setState({
-            unit: childunit,
-            showcontent: true,
-            newunit: false,
-        });
-        this.props.callback(childunit);
-    }
+        
+        // Retrieve the CSRF token from html
+        const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 
+        // POST data from childunit to API
+        fetch('/updateunit', {
+            method: 'POST',
+            headers: {'X-CSRFToken': csrftoken},
+            body: JSON.stringify({childunit})
+            
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log(result);
+            
+            // Update state with unit data and show/hide flags
+            this.setState({
+                unit: childunit,
+                showcontent: true,
+                newunit: false,
+            });
+
+            // Pass new unit back to UnitList
+            this.props.callback(childunit);
+        });        
+    }
 };
 
 
@@ -125,12 +160,7 @@ class EditUnitForm extends React.Component {
     }
     // TO-DO: Hook this up to back end
     handle_submit() {
-//        fetch('/updateunit')
-//        .then(
         this.props.callback(this.state.unit);
-//            );
-
-//        ))
     }
     
 
@@ -242,34 +272,6 @@ class EditUnitForm extends React.Component {
     
 };
 
-class AddUnitButton extends React.Component {
-
-    render() {
-        return (<button onClick={this.show_form} type="button" class="btn btn-outline-primary" id="add-unit">Add Unit +</button>);
-    }
-
-    show_form() {
-
-        // Hide the Add Unit Button
-        document.querySelector('#add-unit').style.display = 'none';
-
-        // Add a new div to hold our Add Unit Form
-        var formdiv = document.createElement('div');
-        div.append(formdiv);
-
-        // Display the Add Unit Form Component
-        ReactDOM.render(React.createElement(AddUnitForm), formdiv);
-    }
-}
-
-class AddUnitForm extends React.Component {
-    
-    // Actually... this should probably be broken out into it's own html page...
-    render() {
-
-        return(<p>Put a form here!</p>);
-    }
-}
 
 class UnitList extends React.Component {
     

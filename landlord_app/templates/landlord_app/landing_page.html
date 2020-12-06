@@ -35,6 +35,7 @@
 {% endblock %}
 
 {% block body %}
+    {% csrf_token %}
     <div class="container" id="unit-list">
         <script type="text/babel" src="static/landlord_app/unit_list.js"></script>
         <button type="button" class="btn btn-outline-primary">Primary</button>
