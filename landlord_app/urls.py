@@ -28,5 +28,6 @@ urlpatterns = [
     path('updateunit', views.update_unit, name='updateunit'),
     path('saveunit', views.save_unit, name='saveunit'),
     path('evictiontree', views.eviction_tree, name='evictiontree'),
-    path('rules/<str:state>', views.state_rules, name='staterules')
+    path('rules/<str:state>', views.state_rules, name='staterules'),
+    path('deleteunit', views.delete_unit, name='deleteunit')
 ]

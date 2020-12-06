@@ -76,8 +76,8 @@ def register(request):
             })
         login(request, user)
         return HttpResponseRedirect(reverse("landing"))
-    else:
-        return render(request, "landlord_app/register.html")
+
+    return render(request, "landlord_app/register.html")
 
 @login_required
 def landing_page(request):
@@ -162,6 +162,28 @@ def update_unit(request):
     else:
         return render(request, 'landlord_app/add_unit.html')
 
+
+@login_required
+def delete_unit(request):
+    """
+    Given a unit ID via 'PUT', delete the corresponding unit from the DB only if
+    the requestor is the owner of that unit.
+    """
+    if request.method != 'PUT':
+        return JsonResponse({"error": "PUT method required."}, status=400)
+
+    data = json.loads(request.body)
+    print(data)
+    unit = Unit.objects.get(id=data["id"])
+
+    if request.user == unit.owner:
+
+        unit.delete()
+        return JsonResponse({"message": "Unit deleted successfully."}, status=201)
+
+    return JsonResponse({"error": "User is not the owner of this unit."}, status=400)
+
+
 #@login_required
 #def update_unit(request):
     """
@@ -190,6 +212,35 @@ def update_unit(request):
     
 #    return JsonResponse({"error": "User is not the owner of this unit."}, status=400)
 
+@login_required
+def update_tenant(request):
+    """
+    """
+    if request.method == 'POST':
+    
+        data = json.loads(request.body)
+        print(data)
+
+        # Get the state object associate with the pk submitted from request
+        state = State.objects.get(pk=data["childunit"]["state"])
+
+        # Create an instance of Unit with attributes from request
+        newunit = Unit(
+            nickname=data["childunit"]["nickname"],
+            address_line1=data["childunit"]["address_line1"],
+            city=data["childunit"]["city"],
+            state=state,
+            zipcode=data["childunit"]["zipcode"],
+            owner=request.user
+        )
+
+        # Handle conditional address_line2 field
+        if 'address_line2' in data["childunit"].keys():
+            newunit.address_line2 = data["childunit"]["address_line2"]
+
+        newunit.save()
+        return JsonResponse({"message": "New unit saved successfully."}, status=201)
+            
 
 
 
