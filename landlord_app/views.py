@@ -127,7 +127,7 @@ def update_unit(request):
             newunit.address_line2 = data["childunit"]["address_line2"]
 
         newunit.save()
-        return JsonResponse({"message": "New unit saved successfully."}, status=201)
+        return JsonResponse({"message": "New unit saved successfully.", "id": newunit.id}, status=201)
     
     elif request.method == 'PUT':
 
@@ -174,7 +174,7 @@ def delete_unit(request):
 
     data = json.loads(request.body)
     print(data)
-    unit = Unit.objects.get(id=data["id"])
+    unit = Unit.objects.get(id=data["childunit"]["id"])
 
     if request.user == unit.owner:
 

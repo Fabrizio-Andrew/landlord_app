@@ -8,12 +8,14 @@ class Unit extends React.Component {
             showcontent: this.props.showcontent,
             showeditform: this.props.showeditform,
             newunit: this.props.newunit
-        };
+        }
+
         this.edit_click = this.edit_click.bind(this);
+        this.DeleteUnit = this.DeleteUnit.bind(this);
     }
 
     render() {
-
+        console.log(this.props.unit)
         // If this Unit has a tenant, display it.  Otherwise, display "Vacant".
         if (this.props.unit["tenants"].length > 0) {
             var remtenant = <div className="row no-gutters"><button type="button" class="btn btn-primary">Remove Tenant</button></div>;
@@ -59,8 +61,8 @@ class Unit extends React.Component {
                         </div>
                     </div>
                 }
-                {this.state.showeditform && <EditUnitForm unit={this.state.unit} callback={this.EditUnitSubmit} />}
-                {this.state.newunit && <EditUnitForm unit={this.state.unit} callback={this.NewUnitSubmit} />}
+                {this.state.showeditform && <EditUnitForm unit={this.state.unit} callback={this.EditUnitSubmit} delete={this.DeleteUnit}/>}
+                {this.state.newunit && <EditUnitForm unit={this.state.unit} callback={this.NewUnitSubmit} newunit={true}/>}
             </div>
         );
     }
@@ -118,6 +120,9 @@ class Unit extends React.Component {
         .then(result => {
             console.log(result);
             
+            // Add the id from JsonResponse to the childunit object
+            childunit.id = result.id;
+
             // Update state with unit data and show/hide flags
             this.setState({
                 unit: childunit,
@@ -129,7 +134,28 @@ class Unit extends React.Component {
             this.props.callback(childunit);
         });        
     }
-};
+
+    DeleteUnit(childunit) {
+
+        // Retrieve the CSRF token from html
+        const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+        // PUT request to API
+        fetch('/deleteunit', {
+            method: 'PUT',
+            headers: {'X-CSRFToken': csrftoken},
+            body: JSON.stringify({childunit})
+            
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log(result);
+        })
+
+        // Delete unit from UnitList state via callback
+        this.props.delete(childunit);
+    }
+}
 
 
 
@@ -143,6 +169,7 @@ class EditUnitForm extends React.Component {
         }
         this.handle_change = this.handle_change.bind(this);
         this.handle_submit = this.handle_submit.bind(this);
+        this.delete_unit = this.delete_unit.bind(this);
     };
 
     handle_change(event) {
@@ -162,6 +189,9 @@ class EditUnitForm extends React.Component {
         this.props.callback(this.state.unit);
     }
     
+    delete_unit() {
+        this.props.delete(this.state.unit)
+    }
 
     render() {
         return (
@@ -263,6 +293,7 @@ class EditUnitForm extends React.Component {
                             <input name="zipcode" type="text" value={this.state.unit["zipcode"]} onChange={this.handle_change} className="form-control" aria-label="Zip Code" aria-describedby="inputGroup-sizing-sm"></input>
                         </div>
                         <button type="button" class="btn btn-primary" onClick={this.handle_submit}>Save</button>
+                        <button type="button" class="btn btn-danger" onClick={this.delete_unit}>Delete Unit</button>
                     </div>
                 </div>
             </div>
@@ -359,15 +390,15 @@ class Tenant extends React.Component {
         const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
 
         // POST data from childtenant to API
-//        fetch('/updatetenant', {
- //           method: 'POST',
-//            headers: {'X-CSRFToken': csrftoken},
-//            body: JSON.stringify({childtenant})
-//            
-//        })
-//        .then(response => response.json())
-//        .then(result => {
-//            console.log(result);
+        fetch('/updatetenant', {
+            method: 'POST',
+            headers: {'X-CSRFToken': csrftoken},
+            body: JSON.stringify({childtenant})
+            
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log(result);
             
             // Update state with tenant data and show/hide flags
             this.setState({
@@ -378,7 +409,7 @@ class Tenant extends React.Component {
 
             // Pass new tenant back to TenantList
             this.props.callback(childtenant);
-//        });        
+        });        
     }
 }
 
@@ -462,9 +493,10 @@ class UnitList extends React.Component {
         }
         this.add_unit = this.add_unit.bind(this);
         this.new_unit = this.new_unit.bind(this);
+    //    this.delete_unit = this.delete_unit(this);
     }
 
-// https://www.robinwieruch.de/react-fetching-data 
+    // https://www.robinwieruch.de/react-fetching-data 
     componentDidMount() {
         fetch("/getunits")
             .then(response => response.json())
@@ -478,9 +510,9 @@ class UnitList extends React.Component {
             <div>
                 <ul>
                     {units.map(unit =>
-                        <Unit unit={unit} showcontent={true} showeditform={false} newunit={false} />
+                        <Unit unit={unit} showcontent={true} showeditform={false} newunit={false} delete={this.delete_unit} />
                     )}
-                    {this.state.newunit && <Unit unit={{"tenants": ""}} showcontent={false} showeditform={false} newunit={true} callback={this.add_unit} />}
+                    {this.state.newunit && <Unit unit={{"tenants": ""}} showcontent={false} showeditform={false} newunit={true} callback={this.add_unit} delete={this.delete_unit} />}
                 </ul>
                 {this.state.newunit ? '' : <button onClick={this.new_unit} type="button" class="btn btn-outline-primary" id="add-unit">Add Unit +</button>}
             </div>
@@ -498,6 +530,24 @@ class UnitList extends React.Component {
             units: this.state.units.concat(childunit),
             newunit: false
         });
+    }
+
+    delete_unit = (childunit) => {
+
+        // Filter the deleted unit out of the state
+        const newunitslist = this.state.units.filter((unit) => {
+            return unit.id !== childunit.id
+        });
+
+        console.log(newunitslist)
+
+        // Set state to the new unit list
+        this.setState({
+            units: newunitslist
+        });
+
+        // Re-render the UnitList component
+        ReactDOM.render(<UnitList />, div);
     }
 }
 
