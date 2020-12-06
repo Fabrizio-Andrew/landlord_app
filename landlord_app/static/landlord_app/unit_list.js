@@ -272,6 +272,66 @@ class EditUnitForm extends React.Component {
     
 };
 
+// TO-DO: Use this to replace the tenants field in the unit list
+class TenantList extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            tenants: this.props.tenants,
+            newtenant: false,
+            collapsed: true
+        }
+    }
+
+    render() {
+
+        const tenants = this.state.tenants
+
+        return [
+            <div>
+                {this.state.collapsed ?
+                    <Tenant tenant={tenants[0]} />
+                    :
+                    <ul>
+                        {tenants.map(tenant =>
+                            <Tenant tenant={tenant} />
+                        )}
+                        {this.state.newtenant && <Tenant newtenant={true} callback={this.add_tenant} />}
+                    </ul>
+                }
+                {this.state.newtenant ? '' : <button onClick={this.new_tenant} type="button" class="btn btn-outline-primary" id="add-unit">Add Tenant +</button>}
+            </div>
+        ];
+    }
+
+    new_tenant() {
+        this.setState({
+            newtenant: true
+        });
+    }
+
+    add_tenant(childtenant) {
+        this.setState({
+            tenants: this.state.tenants.concat(childtenant),
+            newtenant: false
+        });
+    }
+}
+
+class Tenant extends React.Component {
+
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            tenant: this.props.tenant,
+            editform: false
+        }
+    }
+}
+
 
 class UnitList extends React.Component {
     
@@ -306,7 +366,6 @@ class UnitList extends React.Component {
                 </ul>
                 {this.state.newunit ? '' : <button onClick={this.new_unit} type="button" class="btn btn-outline-primary" id="add-unit">Add Unit +</button>}
             </div>
-
         ];
     }
 
