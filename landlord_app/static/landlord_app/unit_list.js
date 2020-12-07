@@ -324,7 +324,7 @@ class TenantList extends React.Component {
                 <div className="tenants">
                         <ul>
                             {tenants.map(tenant =>
-                                <Tenant tenant={tenant} showcontent={true} showeditform={false} newtenant={false} />
+                                <Tenant tenant={tenant} showcontent={true} showeditform={false} newtenant={false} unit={this.props.unit} />
                             )}
                             {this.state.newtenant && <Tenant tenant={{"tenant_first": ""}} newtenant={true} callback={this.add_tenant} unit={this.props.unit} />}
                         </ul>
@@ -366,6 +366,7 @@ class Tenant extends React.Component {
             newtenant: this.props.newtenant
         }
         this.NewTenantSubmit = this.NewTenantSubmit.bind(this);
+        this.edit_click = this.edit_click.bind(this);
     }
 
     render() {
@@ -373,16 +374,27 @@ class Tenant extends React.Component {
             <div>
                 {this.state.showcontent &&
                     <div className="row no-gutters">
-                        <p className="card-text">Tenant: {this.props.tenant["tenant_first"]} {this.props.tenant["tenant_last"]} -- Email: {this.props.tenant["tenant_email"]}</p>
-                        <a href="#">Edit</a>
+                        <p className="card-text">Tenant: {this.state.tenant["tenant_first"]} {this.state.tenant["tenant_last"]} -- Email: {this.state.tenant["tenant_email"]}</p>
+                        <a className="edit-tenant" href="#" onClick={this.edit_click}>Edit</a>
 
                     </div>
                 }
-                {this.state.showeditform && <EditTenantForm unit={this.state.tenant} callback={this.EditTenantSubmit} />}
+                {this.state.showeditform && <EditTenantForm tenant={this.state.tenant} callback={this.EditTenantSubmit} />}
                 {this.state.newtenant && <EditTenantForm tenant={this.state.tenant} callback={this.NewTenantSubmit} />}
             </div>
             
         ]
+    }
+
+    edit_click() {
+
+        console.log(this.state);
+        
+        // Hide Unit Content and show the edit form
+        this.setState({
+            showcontent: false,
+            showeditform: true
+        });
     }
 
     NewTenantSubmit(childtenant) {
@@ -414,6 +426,34 @@ class Tenant extends React.Component {
 
             // Pass new tenant back to TenantList
             this.props.callback(childtenant);
+        });
+    }
+
+    // https://medium.com/@ruthmpardee/passing-data-between-react-components-103ad82ebd17
+    EditTenantSubmit = (childtenant) => {
+
+        // Retrieve the CSRF token from html
+        const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+        // Set the New tenant's unit ID to the current unit's ID
+        childtenant.unit_id = this.props.unit.id
+
+        // PUT data from childtenant to API
+        fetch('/updatetenant', {
+            method: 'PUT',
+            headers: {'X-CSRFToken': csrftoken},
+            body: JSON.stringify({childtenant})
+            
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log(result);
+        });
+        // Update state with tenant data and show/hide flags
+        this.setState({
+            tenant: childtenant,
+            showcontent: true,
+            showeditform: false
         });
     }
 }
@@ -470,6 +510,7 @@ class EditTenantForm extends React.Component {
                     <input name="tenant_email" type="text" value={this.state.tenant["tenant_email"]} onChange={this.handle_change.bind(this)} className="form-control" aria-label="tenant_email" aria-describedby="inputGroup-sizing-sm"></input>
                 </div>
                 <button type="button" class="btn btn-primary" onClick={this.handle_submit}>Save</button>
+                <button type="button" class="btn btn-danger" onClick={this.delete_unit}>Delete Tenant</button>
             </div>
         );
     }
