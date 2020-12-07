@@ -17,9 +17,8 @@ class Unit extends React.Component {
     render() {
         console.log(this.props.unit)
         // If this Unit has a tenant, display it.  Otherwise, display "Vacant".
-        if (this.props.unit["tenants"].length > 0) {
-            var remtenant = <div className="row no-gutters"><button type="button" class="btn btn-primary">Remove Tenant</button></div>;
-            var lease = this.props.unit["tenants"][0]["lease"];
+//        if (this.props.unit["tenants"].length > 0) {
+//            var lease = this.props.unit["tenants"][0]["lease"];
 
             // If this tenant has a lease, display it.  Otherwise, display "month-to-month".
 //            if (typeof(lease) != 'undefined' && lease != null) {
@@ -27,9 +26,9 @@ class Unit extends React.Component {
 //            } else {
 //                var leaseline = <p className="card-text">Month-to-Month</p>;
 //            } 
-        } else {
-            var tenant = <p className="card-text">Vacant: <a href="#">Add a Tenant</a></p>;
-        }
+//        } else {
+//            var tenant = <p className="card-text">Vacant: <a href="#">Add a Tenant</a></p>;
+//        }
 
         // Create a uniqe ID for each card
         var uniqueid = `card-content-${this.props.unit["id"]}`;
@@ -38,25 +37,24 @@ class Unit extends React.Component {
             <div key={this.state.unit["id"]} className="card mb-3">
                 {this.state.showcontent && 
                     <div className="row no-gutters" id={uniqueid}>
-                        <div className="col-md-3" style={{backgroundColor: "grey"}}>
+                        <div className="col-md-3">
                             <svg width="8em" height="8em" viewBox="0 0 16 16" className="bi bi-house-door" fill="rgb(1, 143, 1)" xmlns="http://www.w3.org/2000/svg">
                                 <path fillRule="evenodd" d="M7.646 1.146a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 .146.354v7a.5.5 0 0 1-.5.5H9.5a.5.5 0 0 1-.5-.5v-4H7v4a.5.5 0 0 1-.5.5H2a.5.5 0 0 1-.5-.5v-7a.5.5 0 0 1 .146-.354l6-6zM2.5 7.707V14H6v-4a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v4h3.5V7.707L8 2.207l-5.5 5.5z"/>
                                 <path fillRule="evenodd" d="M13 2.5V6l-2-2V2.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5z"/>
                             </svg>
                         </div>
-                        <div className="col-md-7">
+                        <div className="col-md-8">
                             <div className="card-body">
                                 <h5 className="card-title">{this.state.unit["nickname"]}</h5>
                                 <p className="card-text">{this.state.unit["address_line1"]}, {this.state.unit["address_line2"]} {this.state.unit["city"]}, {this.state.unit["state"]} {this.state.unit["zipcode"]}</p>
                                 <TenantList tenants={this.state.unit["tenants"]} unit={this.state.unit} />
                             </div>
                         </div>
-                        <div className="col-md-2" style={{backgroundColor: "grey"}}>
+                        <div className="col-md-1">
                             <div className="row no-gutters">
                                 <button type="button" class="btn btn-primary" onClick={this.edit_click}>Edit</button>
                                 
                             </div>
-                            {remtenant}
                         </div>
                     </div>
                 }
@@ -323,7 +321,7 @@ class TenantList extends React.Component {
 
         if (typeof tenants !== 'undefined' && tenants.length > 0) {
             return (
-                <div>
+                <div className="tenants">
                         <ul>
                             {tenants.map(tenant =>
                                 <Tenant tenant={tenant} showcontent={true} showeditform={false} newtenant={false} />
@@ -335,7 +333,7 @@ class TenantList extends React.Component {
             );
         }
         return (
-            <div>
+            <div className="tenants">
                 <p className="card-text">Vacant: <a href="#" onClick={this.new_tenant}>Add a Tenant</a></p>
                 {this.state.newtenant && <Tenant tenant={{"tenant_first": ""}} newtenant={true} callback={this.add_tenant} unit={this.props.unit} />}
             </div>

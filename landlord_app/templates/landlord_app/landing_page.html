@@ -5,6 +5,20 @@
 {% endblock %}
 {% block head %}
     <style>
+
+        ul {
+            padding: 0px
+        }
+
+        .tenants > button {
+            color: rgb(1, 143, 1);
+            border: 1px solid rgb(1, 143, 1);
+        }
+
+        .card-body {
+            padding: 20px 0px 20px 0px;
+        }
+
         .card {
             max-width: 800px;
             margin: auto;
@@ -13,6 +27,13 @@
         .col-md-3 {
             display: flex;
             align-items: center;
+        }
+
+        .col-md-1 > div > button {
+            position: absolute;
+            right: 0;
+            background-color:rgb(1, 143, 1);
+            border: 1px solid rgb(1, 143, 1);
         }
 
         svg {
