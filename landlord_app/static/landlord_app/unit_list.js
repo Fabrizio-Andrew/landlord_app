@@ -15,20 +15,6 @@ class Unit extends React.Component {
     }
 
     render() {
-        console.log(this.props.unit)
-        // If this Unit has a tenant, display it.  Otherwise, display "Vacant".
-//        if (this.props.unit["tenants"].length > 0) {
-//            var lease = this.props.unit["tenants"][0]["lease"];
-
-            // If this tenant has a lease, display it.  Otherwise, display "month-to-month".
-//            if (typeof(lease) != 'undefined' && lease != null) {
-//                var leaseline = <p className="card-text">Rent: {lease["rent_amount"]}  {lease["start_date"]} to {lease["end_date"]}</p>;
-//            } else {
-//                var leaseline = <p className="card-text">Month-to-Month</p>;
-//            } 
-//        } else {
-//            var tenant = <p className="card-text">Vacant: <a href="#">Add a Tenant</a></p>;
-//        }
 
         // Create a uniqe ID for each card
         var uniqueid = `card-content-${this.state.unit["id"]}`;
@@ -671,8 +657,6 @@ class UnitList extends React.Component {
     }
 
 }
-
-
 
 const div = document.querySelector('#unit-list');
 ReactDOM.render(React.createElement(UnitList), div);

@@ -59,25 +59,6 @@ class StateFactory(DjangoModelFactory):
 
 ###################################### TEST CASES ######################################
 
-# class StateRulesTestCase(TestCase):
-
-    # This test case is failing for some reason
-
-
-#    def setup(self):
-
-        # Create State
-#        teststate = StateFactory(abbrev='MD')
-#        print(teststate)
-
-#    def test_staterules(self):
-
-#        req = RequestFactory()
-#        state = 'md'
-#        resp = views.state_rules(req, state)
-#        self.assertEqual(resp.status_code, 200)
-#        self.assertEqual(resp.content["name"], 'Maryland')
-
 
 
 class RequestTestCase(TestCase):

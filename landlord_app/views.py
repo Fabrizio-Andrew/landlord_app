@@ -1,3 +1,10 @@
+"""
+Landlord_App Views Module
+
+This module contains functions that support all logic for addiing, removing,
+updating, and displaying data associated with the Landlord_app.
+"""
+
 import json
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
@@ -8,7 +15,6 @@ from django.urls import reverse
 
 from .models import User, Unit, State, Tenant
 
-# Here's some views:
 
 def index(request):
     """
@@ -36,8 +42,7 @@ def login_view(request):
             return render(request, "landlord_app/login.html", {
                 "message": "Invalid username and/or password."
             })
-    else:
-        return render(request, "landlord_app/login.html")
+    return render(request, "landlord_app/login.html")
 
 
 def logout_view(request):
@@ -56,14 +61,14 @@ def register(request):
                 "message": "Passwords must match."
             })
         user = User(username=request.POST["email"],
-        email=request.POST["email"],
-        first_name=request.POST["firstname"],
-        last_name=request.POST["lastname"],
-        address_line1=request.POST["street1"],
-        address_line2=request.POST["street2"],
-        city=request.POST["city"],
-        state=request.POST["state"],
-        zipcode=request.POST["zipcode"])
+                    email=request.POST["email"],
+                    first_name=request.POST["firstname"],
+                    last_name=request.POST["lastname"],
+                    address_line1=request.POST["street1"],
+                    address_line2=request.POST["street2"],
+                    city=request.POST["city"],
+                    state=request.POST["state"],
+                    zipcode=request.POST["zipcode"])
 
         # Hash and save password
         user.set_password(password)
@@ -80,9 +85,11 @@ def register(request):
 
     return render(request, "landlord_app/register.html")
 
+
 @login_required
 def landing_page(request):
     return render(request, 'landlord_app/landing_page.html')
+
 
 @login_required
 def get_units(request):
@@ -94,9 +101,6 @@ def get_units(request):
     units = Unit.objects.filter(owner=user)
     return JsonResponse([unit.serialize() for unit in units], safe=False)
 
-# OBSOLETE
-def add_unit(request):
-    return render(request, 'landlord_app/add_unit.html')
 
 @login_required
 def update_unit(request):
@@ -104,11 +108,11 @@ def update_unit(request):
     Given a request via POST, creates an instance of Unit with the request
     payload and saves the unit.
     """
-    
+
     if request.method == 'POST':
-    
+
         d = json.loads(request.body)
-        data - d["childunit"]
+        data = d["childunit"]
         print(data)
 
         # Get the state object associate with the pk submitted from request
@@ -130,7 +134,7 @@ def update_unit(request):
 
         newunit.save()
         return JsonResponse({"message": "New unit saved successfully.", "id": newunit.id}, status=201)
-    
+
     elif request.method == 'PUT':
 
         # Retrieve the specified Unit Object
@@ -159,7 +163,7 @@ def update_unit(request):
 
             unit.save()
             return JsonResponse({"message": "Unit updated successfully."}, status=201)
-        
+
         return JsonResponse({"error": "User is not the owner of this unit."}, status=400)
 
     else:
@@ -191,9 +195,11 @@ def delete_unit(request):
 @login_required
 def update_tenant(request):
     """
+    Given a tenant's data via POST or PUT, create or update the Tenant instance
+    only if the requestor is the owner of the associated unit.
     """
     if request.method == 'POST':
-    
+
         d = json.loads(request.body)
         data = d["childtenant"]
         print(data)
@@ -203,7 +209,7 @@ def update_tenant(request):
 
         # Confirm that the user is the owner of the unit involved
         if request.user == unit.owner:
-        
+
             # Create an instance of Unit with attributes from request
             newtenant = Tenant(
                 tenant_first=data["tenant_first"],
@@ -216,7 +222,7 @@ def update_tenant(request):
             return JsonResponse({"message": "New tenant saved successfully.", "id": newtenant.id}, status=201)
 
         return JsonResponse({"error": "User is not the owner of this unit."}, status=400)
-    
+
     elif request.method == 'PUT':
 
         d = json.loads(request.body)
@@ -239,11 +245,12 @@ def update_tenant(request):
             tenant.save()
 
             return JsonResponse({"message": "Tenant updated successfully."}, status=201)
-        
+
         return JsonResponse({"error": "User is not the owner of this unit."}, status=400)
 
     else:
         return JsonResponse({"error": "POST or PUT method required"}, status=400)
+
 
 @login_required
 def delete_tenant(request):
@@ -271,16 +278,3 @@ def delete_tenant(request):
         return JsonResponse({"message": "Tenant deleted successfully."}, status=201)
 
     return JsonResponse({"error": "User is not the owner of this unit."}, status=400)
-
-
-def eviction_tree(request):
-    return render(request, 'landlord_app/evict_tree.html')
-
-
-def state_rules(request, state):
-    """
-    Given a state abbreviation, provides a JSON output of relevant laws for that state.
-    """
-    requestedstate = State.objects.get(abbrev=state.upper())
-    serialized = requestedstate.serialize()
-    return JsonResponse(serialized, safe=False)
