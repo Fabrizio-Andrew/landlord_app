@@ -31,7 +31,8 @@ class Unit extends React.Component {
 //        }
 
         // Create a uniqe ID for each card
-        var uniqueid = `card-content-${this.props.unit["id"]}`;
+        var uniqueid = `card-content-${this.state.unit["id"]}`;
+        var tenantsid = `tenants-${this.state.unit["id"]}`;
 
         return (
             <div key={this.state.unit["id"]} className="card mb-3">
@@ -47,7 +48,9 @@ class Unit extends React.Component {
                             <div className="card-body">
                                 <h5 className="card-title">{this.state.unit["nickname"]}</h5>
                                 <p className="card-text">{this.state.unit["address_line1"]}, {this.state.unit["address_line2"]} {this.state.unit["city"]}, {this.state.unit["state"]} {this.state.unit["zipcode"]}</p>
-                                <TenantList tenants={this.state.unit["tenants"]} unit={this.state.unit} />
+                                <div id={tenantsid}>
+                                    <TenantList tenants={this.state.unit["tenants"]} unit={this.state.unit} />
+                                </div>
                             </div>
                         </div>
                         <div className="col-md-1">
@@ -186,7 +189,7 @@ class EditUnitForm extends React.Component {
     }
     
     delete_unit() {
-        this.props.delete(this.state.unit)
+        this.props.delete(this.state.unit);
     }
 
     render() {
@@ -313,6 +316,7 @@ class TenantList extends React.Component {
         }
         this.new_tenant = this.new_tenant.bind(this);
         this.add_tenant = this.add_tenant.bind(this);
+        this.delete_tenant = this.delete_tenant.bind(this);
     }
 
     render() {
@@ -324,9 +328,9 @@ class TenantList extends React.Component {
                 <div className="tenants">
                         <ul>
                             {tenants.map(tenant =>
-                                <Tenant tenant={tenant} showcontent={true} showeditform={false} newtenant={false} unit={this.props.unit} />
+                                <Tenant tenant={tenant} showcontent={true} showeditform={false} newtenant={false} unit={this.props.unit} delete={this.delete_tenant} />
                             )}
-                            {this.state.newtenant && <Tenant tenant={{"tenant_first": ""}} newtenant={true} callback={this.add_tenant} unit={this.props.unit} />}
+                            {this.state.newtenant && <Tenant tenant={{"tenant_first": ""}} newtenant={true} callback={this.add_tenant} unit={this.props.unit} cancel={this.cancel_tenant} />}
                         </ul>
                     {this.state.newtenant ? '' : <button onClick={this.new_tenant} type="button" class="btn btn-outline-primary" id="add-tenant">Add Tenant +</button>}
                 </div>
@@ -335,7 +339,7 @@ class TenantList extends React.Component {
         return (
             <div className="tenants">
                 <p className="card-text">Vacant: <a href="#" onClick={this.new_tenant}>Add a Tenant</a></p>
-                {this.state.newtenant && <Tenant tenant={{"tenant_first": ""}} newtenant={true} callback={this.add_tenant} unit={this.props.unit} />}
+                {this.state.newtenant && <Tenant tenant={{"tenant_first": ""}} newtenant={true} callback={this.add_tenant} unit={this.props.unit} cancel={this.cancel_tenant} />}
             </div>
         );
     }
@@ -352,7 +356,40 @@ class TenantList extends React.Component {
             newtenant: false
         });
     }
+
+    delete_tenant = (childtenant) => {
+
+        // Filter the deleted tenant out of the state
+        const newtenantslist = this.state.tenants.filter((tenant) => {
+            return tenant.id !== childtenant.id
+        });
+
+        // Set the vacant prop based on whether or not there are tenants in the list.
+        if (newtenantslist.length > 0) {
+            var vac = false;
+        } else {
+            var vac = true;
+        }
+
+        // Re-render the TenantList component
+        const tenantsdiv = document.querySelector(`#tenants-${this.props.unit.id}`);
+        ReactDOM.render(<TenantList tenants={newtenantslist} vacant={vac} unit={this.props.unit} delete={this.props.delete} />, tenantsdiv);
+    }
+
+    cancel_tenant = () => {
+        
+        // Set newtenant flag back to false
+        this.setState({
+            newunit: false
+        });
+
+        // Re-render the TenantList component
+        const tenantsdiv = document.querySelector(`#tenants-${this.props.unit.id}`);
+        ReactDOM.render(<TenantList tenants={this.props.tenants} vacant={this.props.vacant} unit={this.props.unit} />, tenantsdiv);
+    }
+
 }
+
 
 class Tenant extends React.Component {
 
@@ -367,6 +404,7 @@ class Tenant extends React.Component {
         }
         this.NewTenantSubmit = this.NewTenantSubmit.bind(this);
         this.edit_click = this.edit_click.bind(this);
+        this.DeleteTenant = this.DeleteTenant.bind(this);
     }
 
     render() {
@@ -379,8 +417,8 @@ class Tenant extends React.Component {
 
                     </div>
                 }
-                {this.state.showeditform && <EditTenantForm tenant={this.state.tenant} callback={this.EditTenantSubmit} />}
-                {this.state.newtenant && <EditTenantForm tenant={this.state.tenant} callback={this.NewTenantSubmit} />}
+                {this.state.showeditform && <EditTenantForm tenant={this.state.tenant} callback={this.EditTenantSubmit} newtenant={false} delete={this.DeleteTenant}/>}
+                {this.state.newtenant && <EditTenantForm tenant={this.state.tenant} callback={this.NewTenantSubmit} newtenant={true} cancel={this.props.cancel} />}
             </div>
             
         ]
@@ -416,6 +454,8 @@ class Tenant extends React.Component {
         .then(result => {
             console.log(result);
             
+             // Add the id from JsonResponse to the childunit object
+             childtenant.id = result.id;
 
             // Update state with tenant data and show/hide flags
             this.setState({
@@ -456,6 +496,30 @@ class Tenant extends React.Component {
             showeditform: false
         });
     }
+
+    DeleteTenant(childtenant) {
+
+        // Retrieve the CSRF token from html
+        const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+
+        // Set the New tenant's unit ID to the current unit's ID
+        childtenant.unit_id = this.props.unit.id
+
+        // PUT request to API
+        fetch('/deletetenant', {
+            method: 'PUT',
+            headers: {'X-CSRFToken': csrftoken},
+            body: JSON.stringify({childtenant})
+            
+        })
+        .then(response => response.json())
+        .then(result => {
+            console.log(result);
+        })
+
+        // Delete tenant from TenantList state via callback
+        this.props.delete(childtenant);
+    }
 }
 
 
@@ -469,6 +533,7 @@ class EditTenantForm extends React.Component {
         }
         this.handle_change = this.handle_change.bind(this);
         this.handle_submit = this.handle_submit.bind(this);
+        this.delete_tenant = this.delete_tenant.bind(this);
     };
 
     handle_change(event) {
@@ -486,6 +551,10 @@ class EditTenantForm extends React.Component {
 
     handle_submit() {
         this.props.callback(this.state.tenant);
+    }
+
+    delete_tenant() {
+        this.props.delete(this.state.tenant);
     }
 
     render() {
@@ -510,7 +579,11 @@ class EditTenantForm extends React.Component {
                     <input name="tenant_email" type="text" value={this.state.tenant["tenant_email"]} onChange={this.handle_change.bind(this)} className="form-control" aria-label="tenant_email" aria-describedby="inputGroup-sizing-sm"></input>
                 </div>
                 <button type="button" class="btn btn-primary" onClick={this.handle_submit}>Save</button>
-                <button type="button" class="btn btn-danger" onClick={this.delete_unit}>Delete Tenant</button>
+                {this.props.newtenant ?
+                    <button type="button" class="btn btn-danger" onClick={this.props.cancel}>Cancel</button>
+                    :
+                    <button type="button" class="btn btn-danger" onClick={this.delete_tenant}>Delete Tenant</button>
+                }
             </div>
         );
     }
