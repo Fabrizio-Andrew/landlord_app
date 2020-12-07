@@ -29,5 +29,6 @@ urlpatterns = [
     path('deleteunit', views.delete_unit, name='deleteunit'),
     path('evictiontree', views.eviction_tree, name='evictiontree'),
     path('rules/<str:state>', views.state_rules, name='staterules'),
-    path('updatetenant', views.update_tenant, name="updatetenant")
+    path('updatetenant', views.update_tenant, name="updatetenant"),
+    path('deletetenant', views.delete_tenant, name="deletetenant")
 ]

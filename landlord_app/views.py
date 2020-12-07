@@ -105,19 +105,20 @@ def update_unit(request):
     
     if request.method == 'POST':
     
-        data = json.loads(request.body)
+        d = json.loads(request.body)
+        data - d["childunit"]
         print(data)
 
         # Get the state object associate with the pk submitted from request
-        state = State.objects.get(pk=data["childunit"]["state"])
+        state = State.objects.get(pk=data["state"])
 
         # Create an instance of Unit with attributes from request
         newunit = Unit(
-            nickname=data["childunit"]["nickname"],
-            address_line1=data["childunit"]["address_line1"],
-            city=data["childunit"]["city"],
+            nickname=data["nickname"],
+            address_line1=data["address_line1"],
+            city=data["city"],
             state=state,
-            zipcode=data["childunit"]["zipcode"],
+            zipcode=data["zipcode"],
             owner=request.user
         )
 
@@ -131,27 +132,28 @@ def update_unit(request):
     elif request.method == 'PUT':
 
         # Retrieve the specified Unit Object
-        data = json.loads(request.body)
+        d = json.loads(request.body)
+        data = d["childunit"]
         print(data)
-        unit = Unit.objects.get(id=data["childunit"]["id"])
+        unit = Unit.objects.get(id=data["id"])
 
         # Confirm that the requestor is the owner of the unit
         if request.user == unit.owner:
 
             # Get the state object associate with the pk submitted from request
-            state = State.objects.get(pk=data["childunit"]["state"])
+            state = State.objects.get(pk=data["state"])
 
             # Update unit attributes
-            unit.nickname = data["childunit"]["nickname"]
-            unit.address_line1 = data["childunit"]["address_line1"]
-            unit.address_line2 = data["childunit"]["address_line2"]
-            unit.city = data["childunit"]["city"]
+            unit.nickname = data["nickname"]
+            unit.address_line1 = data["address_line1"]
+            unit.address_line2 = data["address_line2"]
+            unit.city = data["city"]
             unit.state = state
-            unit.zipcode = data["childunit"]["zipcode"]
+            unit.zipcode = data["zipcode"]
 
             # Handls conditional address_line2 field
-            if 'address_line2' in data["childunit"].keys():
-                unit.address_line2 = data["childunit"]["address_line2"]
+            if 'address_line2' in data.keys():
+                unit.address_line2 = data["address_line2"]
 
             unit.save()
             return JsonResponse({"message": "Unit updated successfully."}, status=201)
@@ -171,9 +173,10 @@ def delete_unit(request):
     if request.method != 'PUT':
         return JsonResponse({"error": "PUT method required."}, status=400)
 
-    data = json.loads(request.body)
+    d = json.loads(request.body)
+    data = d["childunit"]
     print(data)
-    unit = Unit.objects.get(id=data["childunit"]["id"])
+    unit = Unit.objects.get(id=data["id"])
 
     if request.user == unit.owner:
 
@@ -189,28 +192,88 @@ def update_tenant(request):
     """
     if request.method == 'POST':
     
-        data = json.loads(request.body)
+        d = json.loads(request.body)
+        data = d["childtenant"]
         print(data)
 
         # Get the Unit associated with this tenant
-        unit = Unit.objects.get(pk=data["childtenant"]["unit_id"])
+        unit = Unit.objects.get(pk=data["unit_id"])
 
         # Confirm that the user is the owner of the unit involved
         if request.user == unit.owner:
         
             # Create an instance of Unit with attributes from request
             newtenant = Tenant(
-                tenant_first=data["childtenant"]["tenant_first"],
-                tenant_last=data["childtenant"]["tenant_last"],
-                tenant_email=data["childtenant"]["tenant_email"],
+                tenant_first=data["tenant_first"],
+                tenant_last=data["tenant_last"],
+                tenant_email=data["tenant_email"],
                 unit=unit
             )
 
             newtenant.save()
-            return JsonResponse({"message": "New unit saved successfully.", "id": newtenant.id}, status=201)
+            return JsonResponse({"message": "New tenant saved successfully.", "id": newtenant.id}, status=201)
+
+        return JsonResponse({"error": "User is not the owner of this unit."}, status=400)
+    
+    elif request.method == 'PUT':
+
+        d = json.loads(request.body)
+        data = d["childtenant"]
+        print(data)
+
+        # Get the Unit associated with this tenant
+        unit = Unit.objects.get(pk=data["unit_id"])
+
+        # Confirm that the user is the owner of the unit involved
+        if request.user == unit.owner:
+
+            # Get the tenant specified in the request
+            tenant = Tenant.objects.get(pk=data["id"])
+
+            # Update tenant attributes and save the tenant
+            tenant.tenant_first = data["tenant_first"]
+            tenant.tenant_last = data["tenant_last"]
+            tenant.tenant_email = data["tenant_email"]
+            tenant.save()
+
+            return JsonResponse({"message": "Tenant updated successfully."}, status=201)
+        
+        return JsonResponse({"error": "User is not the owner of this unit."}, status=400)
+
+    else:
+        return JsonResponse({"error": "POST or PUT method required"}, status=400)
+
+@login_required
+def delete_tenant(request):
+    """
+    Given a tenant ID via 'PUT', delete the corresponding tenant from the DB only if
+    the requestor is the owner of the corresponding unit.
+    """
+    if request.method != 'PUT':
+        return JsonResponse({"error": "PUT method required."}, status=400)
+
+    d = json.loads(request.body)
+    data = d["childtenant"]
+    print(data)
+
+    # Get the unit associated with this tenant
+    unit = Unit.objects.get(pk=data["unit_id"])
+
+    # Confirm that the user is the owner of this unit
+    if request.user == unit.owner:
+
+        # Delete the tenant
+        tenant = Tenant.objects.get(id=data["id"])
+        tenant.delete()
+
+        return JsonResponse({"message": "Tenant deleted successfully."}, status=201)
+
+    return JsonResponse({"error": "User is not the owner of this unit."}, status=400)
+
 
 def eviction_tree(request):
     return render(request, 'landlord_app/evict_tree.html')
+
 
 def state_rules(request, state):
     """
