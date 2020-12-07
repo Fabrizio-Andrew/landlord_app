@@ -14,6 +14,8 @@ def index(request):
     """
     Render the default view.
     """
+    if request.user.is_authenticated:
+        return render(request, "landlord_app/landing_page.html")
     return render(request, 'landlord_app/index.html')
 
 
