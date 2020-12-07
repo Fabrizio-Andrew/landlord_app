@@ -22,11 +22,11 @@ class Unit extends React.Component {
             var lease = this.props.unit["tenants"][0]["lease"];
 
             // If this tenant has a lease, display it.  Otherwise, display "month-to-month".
-            if (typeof(lease) != 'undefined' && lease != null) {
-                var leaseline = <p className="card-text">Rent: {lease["rent_amount"]}  {lease["start_date"]} to {lease["end_date"]}</p>;
-            } else {
-                var leaseline = <p className="card-text">Month-to-Month</p>;
-            }
+//            if (typeof(lease) != 'undefined' && lease != null) {
+//                var leaseline = <p className="card-text">Rent: {lease["rent_amount"]}  {lease["start_date"]} to {lease["end_date"]}</p>;
+//            } else {
+//                var leaseline = <p className="card-text">Month-to-Month</p>;
+//            } 
         } else {
             var tenant = <p className="card-text">Vacant: <a href="#">Add a Tenant</a></p>;
         }
@@ -48,8 +48,7 @@ class Unit extends React.Component {
                             <div className="card-body">
                                 <h5 className="card-title">{this.state.unit["nickname"]}</h5>
                                 <p className="card-text">{this.state.unit["address_line1"]}, {this.state.unit["address_line2"]} {this.state.unit["city"]}, {this.state.unit["state"]} {this.state.unit["zipcode"]}</p>
-                                <TenantList tenants={this.state.unit["tenants"]} />
-                                {leaseline}
+                                <TenantList tenants={this.state.unit["tenants"]} unit={this.state.unit} />
                             </div>
                         </div>
                         <div className="col-md-2" style={{backgroundColor: "grey"}}>
@@ -156,7 +155,6 @@ class Unit extends React.Component {
         this.props.delete(childunit);
     }
 }
-
 
 
 class EditUnitForm extends React.Component {
@@ -302,8 +300,7 @@ class EditUnitForm extends React.Component {
                 </div>
             </div>
         );
-    }
-    
+    }   
 };
 
 class TenantList extends React.Component {
@@ -339,7 +336,7 @@ class TenantList extends React.Component {
         }
         return (
             <div>
-                <p className="card-text">Vacant: <a href="#">Add a Tenant</a></p>
+                <p className="card-text">Vacant: <a href="#" onClick={this.new_tenant}>Add a Tenant</a></p>
             </div>
         );
     }
@@ -392,6 +389,9 @@ class Tenant extends React.Component {
         
         // Retrieve the CSRF token from html
         const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+        
+        // Set the New tenant's unit ID to the current unit's ID
+        childtenant.unit_id = this.props.unit.id
 
         // POST data from childtenant to API
         fetch('/updatetenant', {
@@ -404,6 +404,7 @@ class Tenant extends React.Component {
         .then(result => {
             console.log(result);
             
+
             // Update state with tenant data and show/hide flags
             this.setState({
                 tenant: childtenant,
@@ -413,7 +414,7 @@ class Tenant extends React.Component {
 
             // Pass new tenant back to TenantList
             this.props.callback(childtenant);
-        });        
+        });
     }
 }
 
@@ -474,17 +475,6 @@ class EditTenantForm extends React.Component {
     }
 }
 
-class Lease extends React.Component {
-
-    constructor(props) {
-        super(props);
-
-        this.state = {
-            lease: this.props.lease,
-        }
-    }
-}
-
 
 class UnitList extends React.Component {
     
@@ -497,7 +487,6 @@ class UnitList extends React.Component {
         }
         this.add_unit = this.add_unit.bind(this);
         this.new_unit = this.new_unit.bind(this);
-    //    this.delete_unit = this.delete_unit(this);
     }
 
     // https://www.robinwieruch.de/react-fetching-data 
@@ -530,6 +519,8 @@ class UnitList extends React.Component {
     }
 
     add_unit(childunit) {
+
+        // Append the childunit to state units and reset the newunit flag to false.
         this.setState({
             units: this.state.units.concat(childunit),
             newunit: false

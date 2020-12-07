@@ -114,8 +114,8 @@ class Tenant(models.Model):
     tenant_first = models.CharField(max_length=40)
     tenant_last = models.CharField(max_length=40)
     tenant_email = models.EmailField(max_length=254)
-    tenant_start = models.DateField(auto_now=False, auto_now_add=False, default=date.today)
-    tenant_end = models.DateField(auto_now=False, auto_now_add=False, default=date.today)
+#    tenant_start = models.DateField(auto_now=False, auto_now_add=False, default=date.today)
+#    tenant_end = models.DateField(auto_now=False, auto_now_add=False, default=date.today)
     unit = models.ForeignKey(
         'Unit',
         on_delete=models.CASCADE,
@@ -139,8 +139,8 @@ class Tenant(models.Model):
             "tenant_first": self.tenant_first,
             "tenant_last": self.tenant_last,
             "tenant_email": self.tenant_email,
-            "tenant_start": self.tenant_start,
-            "tenant_end": self.tenant_end,
+#            "tenant_start": self.tenant_start,
+#            "tenant_end": self.tenant_end,
             "lease": l
         }
 
@@ -176,28 +176,28 @@ class Lease(models.Model):
         }
 
 
-class Tenant_Payment(models.Model):
-    payer_first = models.CharField(max_length=40)
-    payer_last = models.CharField(max_length=40)
-    payer_company = models.CharField(max_length=80)
-    payer_bizind = models.BooleanField()
-    payer_email = models.EmailField(max_length=254)
-    pay_method = models.CharField(max_length=20)
-    amount = models.DecimalField(max_digits=9, decimal_places=2)
-    date_paid = models.DateField(auto_now=False, auto_now_add=False)
-    reason = models.CharField(max_length=40)
-    rtn_number = models.PositiveIntegerField()
-    acct_number = models.PositiveIntegerField()
-    acct_type = models.CharField(max_length=1)
-    check_num = models.PositiveIntegerField()
+#class Tenant_Payment(models.Model):
+#    payer_first = models.CharField(max_length=40)
+#    payer_last = models.CharField(max_length=40)
+#    payer_company = models.CharField(max_length=80)
+#    payer_bizind = models.BooleanField()
+#    payer_email = models.EmailField(max_length=254)
+#    pay_method = models.CharField(max_length=20)
+#    amount = models.DecimalField(max_digits=9, decimal_places=2)
+#    date_paid = models.DateField(auto_now=False, auto_now_add=False)
+#    reason = models.CharField(max_length=40)
+#    rtn_number = models.PositiveIntegerField()
+#    acct_number = models.PositiveIntegerField()
+#    acct_type = models.CharField(max_length=1)
+#    check_num = models.PositiveIntegerField()
 #    check_img = ImageField()
-    cc_num = models.PositiveIntegerField()
-    cc_exp_month = models.PositiveIntegerField()
-    cc_exp_year = models.PositiveIntegerField()
-    cc_vercode = models.PositiveIntegerField()
+#    cc_num = models.PositiveIntegerField()
+#    cc_exp_month = models.PositiveIntegerField()
+#    cc_exp_year = models.PositiveIntegerField()
+#    cc_vercode = models.PositiveIntegerField()
 
-class Evict_Notice(models.Model):
-    notice_type = models.CharField(max_length=40)
-    date_sent = models.DateField(auto_now=False, auto_now_add=False)
-    delivery_method = models.CharField(max_length=40)
+#class Evict_Notice(models.Model):
+#    notice_type = models.CharField(max_length=40)
+#    date_sent = models.DateField(auto_now=False, auto_now_add=False)
+#    delivery_method = models.CharField(max_length=40)
 
