@@ -13,4 +13,6 @@ Brief outline:
 - States are managed as their own data model.  So, it is important that you create a state on the /admin page after migrating models.py.  Any units you create must be associated with a state.  So, it will be impossible to proceed without this step.
 - The State model itself is currently under-utilized.  However, the idea is to gather various state laws regarding landlord-tenant rights.  So, the State model will help with long term scalability and sustainability.
 
+4. **Logging In:** The application front end takes an email address for a username.
+
 4. **Dependencies:** The only external dependency is Factory Boy - and this is only used for Unit Tests.  However, I have included a requirements.txt file for good measure.

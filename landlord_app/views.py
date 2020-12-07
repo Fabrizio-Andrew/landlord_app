@@ -129,8 +129,8 @@ def update_unit(request):
         )
 
         # Handle conditional address_line2 field
-        if 'address_line2' in data["childunit"].keys():
-            newunit.address_line2 = data["childunit"]["address_line2"]
+        if 'address_line2' in data.keys():
+            newunit.address_line2 = data["address_line2"]
 
         newunit.save()
         return JsonResponse({"message": "New unit saved successfully.", "id": newunit.id}, status=201)
