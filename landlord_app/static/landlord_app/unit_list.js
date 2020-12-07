@@ -328,7 +328,7 @@ class TenantList extends React.Component {
                             {tenants.map(tenant =>
                                 <Tenant tenant={tenant} showcontent={true} showeditform={false} newtenant={false} />
                             )}
-                            {this.state.newtenant && <Tenant tenant={{"tenant_first": ""}} newtenant={true} callback={this.add_tenant} />}
+                            {this.state.newtenant && <Tenant tenant={{"tenant_first": ""}} newtenant={true} callback={this.add_tenant} unit={this.props.unit} />}
                         </ul>
                     {this.state.newtenant ? '' : <button onClick={this.new_tenant} type="button" class="btn btn-outline-primary" id="add-tenant">Add Tenant +</button>}
                 </div>
@@ -337,6 +337,7 @@ class TenantList extends React.Component {
         return (
             <div>
                 <p className="card-text">Vacant: <a href="#" onClick={this.new_tenant}>Add a Tenant</a></p>
+                {this.state.newtenant && <Tenant tenant={{"tenant_first": ""}} newtenant={true} callback={this.add_tenant} unit={this.props.unit} />}
             </div>
         );
     }
@@ -366,6 +367,7 @@ class Tenant extends React.Component {
             showeditform: this.props.showeditform,
             newtenant: this.props.newtenant
         }
+        this.NewTenantSubmit = this.NewTenantSubmit.bind(this);
     }
 
     render() {
@@ -385,7 +387,7 @@ class Tenant extends React.Component {
         ]
     }
 
-    NewTenantSubmit = (childtenant) => {
+    NewTenantSubmit(childtenant) {
         
         // Retrieve the CSRF token from html
         const csrftoken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;

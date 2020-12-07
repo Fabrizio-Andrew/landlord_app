@@ -26,8 +26,8 @@ urlpatterns = [
     path("landing", views.landing_page, name="landing"),
     path("getunits", views.get_units, name="getunits"),
     path('updateunit', views.update_unit, name='updateunit'),
-    path('saveunit', views.save_unit, name='saveunit'),
+    path('deleteunit', views.delete_unit, name='deleteunit'),
     path('evictiontree', views.eviction_tree, name='evictiontree'),
     path('rules/<str:state>', views.state_rules, name='staterules'),
-    path('deleteunit', views.delete_unit, name='deleteunit')
+    path('updatetenant', views.update_tenant, name="updatetenant")
 ]

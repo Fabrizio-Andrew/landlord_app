@@ -5,9 +5,8 @@ from django.db import IntegrityError
 from django.http import JsonResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from landlord_app import util
 
-from .models import User, Unit, State
+from .models import User, Unit, State, Tenant
 
 # Here's some views:
 
@@ -184,34 +183,6 @@ def delete_unit(request):
     return JsonResponse({"error": "User is not the owner of this unit."}, status=400)
 
 
-#@login_required
-#def update_unit(request):
-    """
-    Given an existing unit's ID and updated attributes, update the Unit object's
-    attributes only if the currently logged-in user is the owner of the unit.
-    """
-
-#    if request.method != 'PUT':
-#        return JsonResponse({"error": "PUT request required."}, status=400)
-
-    # Retrieve the specified Unit Object
-#    data = json.loads(request.body)
-#    unit = Unit.objects.get(id=data["unit_id"])
-
-    # Confirm that the requestor is the owner of the unit
-#    if request.user == unit.owner:
-
-        # Update unit attributes and save
-#        unit.nickname = data["childunit"]["nickname"]
-#        unit.address_line1 = data["childunit"]["address_line1"]
-#        unit.address_line2 = data["childunit"]["address_line2"]
-#        unit.city = data["childunit"]["city"]
-#        unit.zipcode = data["childunit"]["zipcode"]
-#        unit.save()
-#        return JsonResponse({"message": "Unit updated successfully."}, status=201)
-    
-#    return JsonResponse({"error": "User is not the owner of this unit."}, status=400)
-
 @login_required
 def update_tenant(request):
     """
@@ -221,48 +192,22 @@ def update_tenant(request):
         data = json.loads(request.body)
         print(data)
 
-        # Get the state object associate with the pk submitted from request
-        state = State.objects.get(pk=data["childunit"]["state"])
+        # Get the Unit associated with this tenant
+        unit = Unit.objects.get(pk=data["childtenant"]["unit_id"])
 
-        # Create an instance of Unit with attributes from request
-        newunit = Unit(
-            nickname=data["childunit"]["nickname"],
-            address_line1=data["childunit"]["address_line1"],
-            city=data["childunit"]["city"],
-            state=state,
-            zipcode=data["childunit"]["zipcode"],
-            owner=request.user
-        )
+        # Confirm that the user is the owner of the unit involved
+        if request.user == unit.owner:
+        
+            # Create an instance of Unit with attributes from request
+            newtenant = Tenant(
+                tenant_first=data["childtenant"]["tenant_first"],
+                tenant_last=data["childtenant"]["tenant_last"],
+                tenant_email=data["childtenant"]["tenant_email"],
+                unit=unit
+            )
 
-        # Handle conditional address_line2 field
-        if 'address_line2' in data["childunit"].keys():
-            newunit.address_line2 = data["childunit"]["address_line2"]
-
-        newunit.save()
-        return JsonResponse({"message": "New unit saved successfully."}, status=201)
-            
-
-
-
-def save_unit(request):
-    x = {'nickname': request.POST['nickname'],
-        'address_line1': request.POST['address_line1'],
-        'address_line2': request.POST['address_line2'],
-        'city': request.POST['city'],
-        'state': request.POST['state'],
-        'zipcode': request.POST['zipcode'],
-        'bedrooms': request.POST['bedrooms'],
-        'bathrooms': request.POST['bathrooms']
-    }
-    util.save_unit(x)
-    #for unit in util.list_units()
-
-
-
-    return render(request, 'landlord_app/index.html', {
-        'units': util.list_units_detailed
-
-    })
+            newtenant.save()
+            return JsonResponse({"message": "New unit saved successfully.", "id": newtenant.id}, status=201)
 
 def eviction_tree(request):
     return render(request, 'landlord_app/evict_tree.html')
