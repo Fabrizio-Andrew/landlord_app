@@ -133,7 +133,7 @@ class Tenant(models.Model):
         return f"<{self.pk}: {self.tenant_first} {self.tenant_last}>"
 
     def serialize(self):
-        l = self.lease.serialize()
+#        l = self.lease.serialize()
         return {
             "id": self.pk,
             "tenant_first": self.tenant_first,
@@ -141,7 +141,7 @@ class Tenant(models.Model):
             "tenant_email": self.tenant_email,
 #            "tenant_start": self.tenant_start,
 #            "tenant_end": self.tenant_end,
-            "lease": l
+#            "lease": l
         }
 
 
